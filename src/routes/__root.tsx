@@ -57,6 +57,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // Supabase-auth SPA: render on the client only so localStorage sessions hydrate cleanly.
+  ssr: false,
   head: () => ({
     meta: [
       { charSet: "utf-8" },
