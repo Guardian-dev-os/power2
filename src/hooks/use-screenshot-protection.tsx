@@ -24,7 +24,7 @@ export function useScreenshotProtection() {
       e.stopPropagation();
       // overwrite clipboard if PrintScreen was pressed
       if (k === "printscreen" && navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText("Protected content _ Research Methods").catch(() => {});
+        navigator.clipboard.writeText("Protected content _ Power Electronics 1").catch(() => {});
       }
     }
   }, []);
