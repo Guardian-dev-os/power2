@@ -1,0 +1,23 @@
+import { cors, requireAdmin, sendCodeEmail } from "../_shared/admin.ts";
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: cors });
+  try {
+    const { supa } = await requireAdmin(req);
+    const { request_id } = await req.json();
+    if (!request_id) throw new Error("request_id required");
+    const { data: row } = await supa.from("access_requests").select("*").eq("id", request_id).maybeSingle();
+    if (!row) throw new Error("Request not found");
+    if (!row.email) throw new Error("This request has no email");
+    if (!row.generated_code) throw new Error("This request has no code yet — approve first");
+    const email = await sendCodeEmail(row.email, row.full_name, row.generated_code);
+    return new Response(JSON.stringify({ email }), {
+      headers: { ...cors, "content-type": "application/json" },
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: (e as Error).message }), {
+      status: 400,
+      headers: { ...cors, "content-type": "application/json" },
+    });
+  }
+});
