@@ -10,9 +10,6 @@ export const getRouter = () => {
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
-    // App is a Supabase-auth SPA: session lives in localStorage, so server
-    // rendering can't hydrate auth state. Render everything on the client.
-    defaultSsr: false,
   });
 
   return router;
