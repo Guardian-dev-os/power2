@@ -19,18 +19,21 @@ export type Database = {
           code_id: string
           id: string
           used_at: string
+          user_email: string
           user_id: string
         }
         Insert: {
           code_id: string
           id?: string
           used_at?: string
+          user_email: string
           user_id: string
         }
         Update: {
           code_id?: string
           id?: string
           used_at?: string
+          user_email?: string
           user_id?: string
         }
         Relationships: [
@@ -47,10 +50,10 @@ export type Database = {
         Row: {
           agent_name: string | null
           amount: number
-          assigned_emails: string[]
-          bound_user_id: string | null
+          assigned_emails: string[] | null
           code: string
           created_at: string
+          expires_at: string | null
           id: string
           notes: string | null
           total_seats: number
@@ -59,10 +62,10 @@ export type Database = {
         Insert: {
           agent_name?: string | null
           amount?: number
-          assigned_emails?: string[]
-          bound_user_id?: string | null
+          assigned_emails?: string[] | null
           code: string
           created_at?: string
+          expires_at?: string | null
           id?: string
           notes?: string | null
           total_seats?: number
@@ -71,59 +74,14 @@ export type Database = {
         Update: {
           agent_name?: string | null
           amount?: number
-          assigned_emails?: string[]
-          bound_user_id?: string | null
+          assigned_emails?: string[] | null
           code?: string
           created_at?: string
+          expires_at?: string | null
           id?: string
           notes?: string | null
           total_seats?: number
           used_seats?: number
-        }
-        Relationships: []
-      }
-      access_requests: {
-        Row: {
-          access_code: string | null
-          approved_at: string | null
-          auto_password: string | null
-          created_at: string
-          email: string | null
-          full_name: string
-          generated_code: string | null
-          id: string
-          status: string
-          synthetic_email: string | null
-          user_id: string | null
-          whatsapp: string
-        }
-        Insert: {
-          access_code?: string | null
-          approved_at?: string | null
-          auto_password?: string | null
-          created_at?: string
-          email?: string | null
-          full_name: string
-          generated_code?: string | null
-          id?: string
-          status?: string
-          synthetic_email?: string | null
-          user_id?: string | null
-          whatsapp: string
-        }
-        Update: {
-          access_code?: string | null
-          approved_at?: string | null
-          auto_password?: string | null
-          created_at?: string
-          email?: string | null
-          full_name?: string
-          generated_code?: string | null
-          id?: string
-          status?: string
-          synthetic_email?: string | null
-          user_id?: string | null
-          whatsapp?: string
         }
         Relationships: []
       }
@@ -148,35 +106,10 @@ export type Database = {
         }
         Relationships: []
       }
-      app_settings: {
-        Row: {
-          id: boolean
-          pair_amount: number
-          primary_agent_name: string
-          solo_amount: number
-          updated_at: string
-        }
-        Insert: {
-          id?: boolean
-          pair_amount?: number
-          primary_agent_name?: string
-          solo_amount?: number
-          updated_at?: string
-        }
-        Update: {
-          id?: boolean
-          pair_amount?: number
-          primary_agent_name?: string
-          solo_amount?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
       cards: {
         Row: {
           answer: string
           created_at: string
-          difficulty: string
           id: string
           order_index: number
           question: string
@@ -185,7 +118,6 @@ export type Database = {
         Insert: {
           answer: string
           created_at?: string
-          difficulty?: string
           id?: string
           order_index?: number
           question: string
@@ -194,7 +126,6 @@ export type Database = {
         Update: {
           answer?: string
           created_at?: string
-          difficulty?: string
           id?: string
           order_index?: number
           question?: string
@@ -215,17 +146,21 @@ export type Database = {
           agent_name: string | null
           amount: number
           created_at: string
+          generated_code: string | null
           id: string
-          status: string
+          notes: string | null
+          status: Database["public"]["Enums"]["payment_status"]
           student_email: string
           student_email_2: string | null
         }
         Insert: {
           agent_name?: string | null
-          amount?: number
+          amount: number
           created_at?: string
+          generated_code?: string | null
           id?: string
-          status?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
           student_email: string
           student_email_2?: string | null
         }
@@ -233,8 +168,10 @@ export type Database = {
           agent_name?: string | null
           amount?: number
           created_at?: string
+          generated_code?: string | null
           id?: string
-          status?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
           student_email?: string
           student_email_2?: string | null
         }
@@ -242,55 +179,25 @@ export type Database = {
       }
       profiles: {
         Row: {
-          access_level: string
+          access_level: Database["public"]["Enums"]["access_level"]
           created_at: string
-          email: string | null
+          email: string
           full_name: string | null
           id: string
-          updated_at: string
         }
         Insert: {
-          access_level?: string
+          access_level?: Database["public"]["Enums"]["access_level"]
           created_at?: string
-          email?: string | null
+          email: string
           full_name?: string | null
           id: string
-          updated_at?: string
         }
         Update: {
-          access_level?: string
+          access_level?: Database["public"]["Enums"]["access_level"]
           created_at?: string
-          email?: string | null
+          email?: string
           full_name?: string | null
           id?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      study_notes: {
-        Row: {
-          category: string
-          content: string
-          created_at: string
-          id: string
-          order_index: number
-          title: string
-        }
-        Insert: {
-          category: string
-          content: string
-          created_at?: string
-          id?: string
-          order_index?: number
-          title: string
-        }
-        Update: {
-          category?: string
-          content?: string
-          created_at?: string
-          id?: string
-          order_index?: number
-          title?: string
         }
         Relationships: []
       }
@@ -301,10 +208,10 @@ export type Database = {
           id: string
           message: string
           replied_at: string | null
-          status: string
+          status: Database["public"]["Enums"]["ticket_status"]
           subject: string
           user_email: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           admin_reply?: string | null
@@ -312,10 +219,10 @@ export type Database = {
           id?: string
           message: string
           replied_at?: string | null
-          status?: string
+          status?: Database["public"]["Enums"]["ticket_status"]
           subject: string
           user_email: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           admin_reply?: string | null
@@ -323,10 +230,10 @@ export type Database = {
           id?: string
           message?: string
           replied_at?: string | null
-          status?: string
+          status?: Database["public"]["Enums"]["ticket_status"]
           subject?: string
           user_email?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -359,19 +266,16 @@ export type Database = {
       }
       user_roles: {
         Row: {
-          created_at: string
           id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
-          created_at?: string
           id?: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
-          created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
@@ -395,7 +299,10 @@ export type Database = {
       redeem_access_code: { Args: { _code: string }; Returns: Json }
     }
     Enums: {
-      app_role: "admin"
+      access_level: "free" | "full"
+      app_role: "admin" | "user"
+      payment_status: "pending" | "approved" | "rejected"
+      ticket_status: "open" | "in_progress" | "closed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -523,7 +430,10 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin"],
+      access_level: ["free", "full"],
+      app_role: ["admin", "user"],
+      payment_status: ["pending", "approved", "rejected"],
+      ticket_status: ["open", "in_progress", "closed"],
     },
   },
 } as const
