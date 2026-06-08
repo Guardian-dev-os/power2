@@ -684,6 +684,7 @@ function UsersPanel() {
 
   return (
     <div className="space-y-4 mt-4">
+      <AddUserForm onCreated={load} />
       <Card className="p-4 bg-card text-card-foreground">
         <div className="relative">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
