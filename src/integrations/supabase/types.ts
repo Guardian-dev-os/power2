@@ -85,6 +85,51 @@ export type Database = {
         }
         Relationships: []
       }
+      access_requests: {
+        Row: {
+          approved_at: string | null
+          auto_password: string | null
+          created_at: string
+          email: string
+          full_name: string
+          generated_code: string | null
+          id: string
+          notes: string | null
+          status: Database["public"]["Enums"]["request_status"]
+          synthetic_email: string | null
+          user_id: string | null
+          whatsapp: string
+        }
+        Insert: {
+          approved_at?: string | null
+          auto_password?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          generated_code?: string | null
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          synthetic_email?: string | null
+          user_id?: string | null
+          whatsapp: string
+        }
+        Update: {
+          approved_at?: string | null
+          auto_password?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          generated_code?: string | null
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          synthetic_email?: string | null
+          user_id?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       agents: {
         Row: {
           contact: string | null
@@ -105,6 +150,56 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      app_settings: {
+        Row: {
+          id: boolean
+          pair_amount: number
+          primary_agent_name: string
+          solo_amount: number
+          updated_at: string
+        }
+        Insert: {
+          id?: boolean
+          pair_amount?: number
+          primary_agent_name?: string
+          solo_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: boolean
+          pair_amount?: number
+          primary_agent_name?: string
+          solo_amount?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bookmarks: {
+        Row: {
+          card_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          card_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          card_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookmarks_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cards: {
         Row: {
@@ -134,6 +229,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "cards_topic_set_id_fkey"
+            columns: ["topic_set_id"]
+            isOneToOne: false
+            referencedRelation: "topic_sets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_questions: {
+        Row: {
+          answer: string
+          created_at: string
+          difficulty: string
+          id: string
+          options: Json | null
+          order_index: number
+          question: string
+          topic_set_id: string | null
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          difficulty?: string
+          id?: string
+          options?: Json | null
+          order_index?: number
+          question: string
+          topic_set_id?: string | null
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          difficulty?: string
+          id?: string
+          options?: Json | null
+          order_index?: number
+          question?: string
+          topic_set_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_questions_topic_set_id_fkey"
             columns: ["topic_set_id"]
             isOneToOne: false
             referencedRelation: "topic_sets"
@@ -198,6 +334,33 @@ export type Database = {
           email?: string
           full_name?: string | null
           id?: string
+        }
+        Relationships: []
+      }
+      study_notes: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          id: string
+          order_index: number
+          title: string
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          title: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          title?: string
         }
         Relationships: []
       }
@@ -288,6 +451,14 @@ export type Database = {
     }
     Functions: {
       admin_exists: { Args: never; Returns: boolean }
+      admin_set_user_full: {
+        Args: { _is_admin?: boolean; _user_id: string }
+        Returns: Json
+      }
+      approve_access_request: {
+        Args: { _code: string; _request_id: string }
+        Returns: Json
+      }
       claim_admin: { Args: never; Returns: Json }
       has_role: {
         Args: {
@@ -302,6 +473,7 @@ export type Database = {
       access_level: "free" | "full"
       app_role: "admin" | "user"
       payment_status: "pending" | "approved" | "rejected"
+      request_status: "pending" | "approved" | "rejected"
       ticket_status: "open" | "in_progress" | "closed"
     }
     CompositeTypes: {
@@ -433,6 +605,7 @@ export const Constants = {
       access_level: ["free", "full"],
       app_role: ["admin", "user"],
       payment_status: ["pending", "approved", "rejected"],
+      request_status: ["pending", "approved", "rejected"],
       ticket_status: ["open", "in_progress", "closed"],
     },
   },
