@@ -1,0 +1,2 @@
+ALTER TABLE public.access_requests ALTER COLUMN email DROP NOT NULL;
+DELETE FROM public.topic_sets WHERE id = '99999999-9999-9999-9999-999999999999';

@@ -90,7 +90,7 @@ export type Database = {
           approved_at: string | null
           auto_password: string | null
           created_at: string
-          email: string
+          email: string | null
           full_name: string
           generated_code: string | null
           id: string
@@ -104,7 +104,7 @@ export type Database = {
           approved_at?: string | null
           auto_password?: string | null
           created_at?: string
-          email: string
+          email?: string | null
           full_name: string
           generated_code?: string | null
           id?: string
@@ -118,7 +118,7 @@ export type Database = {
           approved_at?: string | null
           auto_password?: string | null
           created_at?: string
-          email?: string
+          email?: string | null
           full_name?: string
           generated_code?: string | null
           id?: string
