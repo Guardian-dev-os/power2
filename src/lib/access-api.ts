@@ -29,7 +29,7 @@ export async function callFn<T = any>(name: string, body: Record<string, unknown
 }
 
 export const accessApi = {
-  submit: (input: { full_name: string; whatsapp: string }) =>
+  submit: (input: { full_name: string; whatsapp: string; email?: string }) =>
     callFn<{ ok: true }>("access-submit", input),
   signIn: (input: { full_name: string; code: string }) =>
     callFn<{ email: string; password: string }>("access-signin", input),
@@ -39,4 +39,11 @@ export const accessApi = {
     callFn<{ email: { sent: boolean; reason?: string } }>("access-resend", input),
   reject: (input: { request_id: string }) =>
     callFn<{ ok: true }>("access-reject", input),
+  createUser: (input: {
+    email: string;
+    password: string;
+    full_name?: string;
+    access_level?: "free" | "full";
+    is_admin?: boolean;
+  }) => callFn<{ ok: true; user_id: string }>("admin-create-user", input),
 };
