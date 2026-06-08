@@ -944,3 +944,86 @@ function SettingsPanel() {
     </div>
   );
 }
+
+function AddUserForm({ onCreated }: { onCreated: () => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [accessLevel, setAccessLevel] = useState<"free" | "full">("full");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    if (!email.trim() || !password.trim()) {
+      toast.error("Email and password are required");
+      return;
+    }
+    setBusy(true);
+    try {
+      await accessApi.createUser({
+        email: email.trim(),
+        password,
+        full_name: fullName.trim() || undefined,
+        access_level: accessLevel,
+        is_admin: isAdmin,
+      });
+      toast.success(`User created${isAdmin ? " (admin)" : ""}`);
+      setEmail(""); setPassword(""); setFullName(""); setAccessLevel("full"); setIsAdmin(false);
+      onCreated();
+    } catch (e: any) {
+      toast.error(e?.message || "Could not create user");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const randomPassword = () => {
+    const a = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+    let s = "";
+    for (let i = 0; i < 12; i++) s += a[Math.floor(Math.random() * a.length)];
+    setPassword(s);
+  };
+
+  return (
+    <Card className="p-4 bg-card text-card-foreground space-y-3">
+      <div className="flex items-center gap-2 mb-1">
+        <UserPlus className="h-4 w-4 text-secondary" />
+        <h3 className="font-semibold">Add a new user</h3>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label className="text-xs text-muted-foreground">Email</label>
+          <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="student@example.com" />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground">Full name (optional)</label>
+          <Input value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Jane Doe" />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="text-xs text-muted-foreground">Password</label>
+          <div className="flex gap-2">
+            <Input type="text" value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" />
+            <Button type="button" variant="outline" onClick={randomPassword}>Generate</Button>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-4 flex-wrap">
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={accessLevel === "full"} onChange={e => setAccessLevel(e.target.checked ? "full" : "free")} />
+          Approve with full access
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={isAdmin} onChange={e => setIsAdmin(e.target.checked)} />
+          Grant admin role
+        </label>
+        <Button onClick={submit} disabled={busy} className="ml-auto bg-brand-gradient">
+          <UserPlus className="h-4 w-4 mr-1" /> {busy ? "Creating…" : "Create user"}
+        </Button>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        The user can immediately sign in with the email and password you set here. Use "Approve with full access" to skip
+        the access-code step.
+      </p>
+    </Card>
+  );
+}
