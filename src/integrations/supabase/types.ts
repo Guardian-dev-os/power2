@@ -205,6 +205,7 @@ export type Database = {
         Row: {
           answer: string
           created_at: string
+          difficulty: string | null
           id: string
           order_index: number
           question: string
@@ -213,6 +214,7 @@ export type Database = {
         Insert: {
           answer: string
           created_at?: string
+          difficulty?: string | null
           id?: string
           order_index?: number
           question: string
@@ -221,6 +223,7 @@ export type Database = {
         Update: {
           answer?: string
           created_at?: string
+          difficulty?: string | null
           id?: string
           order_index?: number
           question?: string
@@ -339,28 +342,46 @@ export type Database = {
       }
       study_notes: {
         Row: {
-          category: string
+          category: string | null
           content: string
           created_at: string
+          difficulty_level: string | null
           id: string
+          is_active: boolean | null
           order_index: number
+          section_number: number | null
+          subtopic: string | null
           title: string
+          topic: string | null
+          updated_at: string | null
         }
         Insert: {
-          category: string
+          category?: string | null
           content: string
           created_at?: string
+          difficulty_level?: string | null
           id?: string
+          is_active?: boolean | null
           order_index?: number
+          section_number?: number | null
+          subtopic?: string | null
           title: string
+          topic?: string | null
+          updated_at?: string | null
         }
         Update: {
-          category?: string
+          category?: string | null
           content?: string
           created_at?: string
+          difficulty_level?: string | null
           id?: string
+          is_active?: boolean | null
           order_index?: number
+          section_number?: number | null
+          subtopic?: string | null
           title?: string
+          topic?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
