@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Card } from "@/components/ui/card";
@@ -6,8 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { RichContent } from "@/components/RichContent";
-
-export const Route = createFileRoute("/notes")({ component: StudyNotes });
 
 interface StudyNote {
   id: string;
@@ -17,7 +14,7 @@ interface StudyNote {
   order_index: number;
 }
 
-function StudyNotes() {
+export default function Notes() {
   const [notes, setNotes] = useState<StudyNote[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);

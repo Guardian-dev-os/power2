@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { useAuth } from "@/hooks/use-auth";
@@ -12,15 +12,13 @@ import { toast } from "sonner";
 import { AccessCodeModal } from "@/components/AccessCodeModal";
 import { KeyRound } from "lucide-react";
 
-export const Route = createFileRoute("/profile")({ component: Profile });
-
-function Profile() {
+export default function Profile() {
   const { user, profile, loading, refresh } = useAuth();
   const nav = useNavigate();
   const [pw, setPw] = useState("");
   const [modal, setModal] = useState(false);
 
-  useEffect(() => { if (!loading && !user) nav({ to: "/sign-in" }); }, [user, loading, nav]);
+  useEffect(() => { if (!loading && !user) nav("/sign-in"); }, [user, loading, nav]);
 
   const changePassword = async () => {
     if (pw.length < 6) return toast.error("Password must be at least 6 characters");

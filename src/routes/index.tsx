@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
@@ -25,9 +25,7 @@ import { InstallAppButton } from "@/components/InstallAppButton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/")({ component: Landing });
-
-function Landing() {
+export default function Landing() {
   const nav = useNavigate();
   const tapsRef = useRef<{ count: number; timer: ReturnType<typeof setTimeout> | null }>({
     count: 0,
@@ -44,7 +42,7 @@ function Landing() {
       s.count = 0;
       if (s.timer) clearTimeout(s.timer);
       toast.success("Admin portal unlocked");
-      nav({ to: "/admin-setup" });
+      nav("/admin-setup");
     }
   };
   const [settings, setSettings] = useState<{
@@ -359,5 +357,5 @@ function Landing() {
         © Power Electronics 1. Master the circuit. Control the power. Ace the exam.
       </footer>
     </div>
-  );
+  )
 }

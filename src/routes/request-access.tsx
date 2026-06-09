@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,9 +10,7 @@ import { ArrowLeft, UserPlus, CheckCircle2, Mail, UserCheck } from "lucide-react
 import logo from "@/assets/logo.png";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/request-access")({ component: RequestAccessPage });
-
-function RequestAccessPage() {
+export default function RequestAccessPage() {
   const nav = useNavigate();
   const [full_name, setName] = useState("");
   const [whatsapp, setWa] = useState("");
@@ -70,7 +68,7 @@ function RequestAccessPage() {
               <strong>access code will be sent via WhatsApp</strong>. Come back here and sign in
               with your full name + code.
             </p>
-            <Button onClick={() => nav({ to: "/sign-in" })} className="bg-brand-gradient w-full">
+            <Button onClick={() => nav("/sign-in")} className="bg-brand-gradient w-full">
               Go to sign in
             </Button>
           </div>
@@ -121,5 +119,5 @@ function RequestAccessPage() {
         )}
       </Card>
     </div>
-  );
+  )
 }
