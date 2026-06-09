@@ -161,7 +161,7 @@ function RequestsPanel() {
   const del = async (id: string) => {
     if (!confirm("Delete this request?")) return;
     try {
-      await deleteAccessRequest(id);
+      await removeRequest({ data: { id } });
       toast.success("Request deleted");
       load();
     } catch (e: any) {
@@ -350,7 +350,7 @@ function CodesPanel() {
       .map((s) => s.trim().toLowerCase())
       .filter(Boolean);
     const rows = Array.from({ length: Math.max(1, bulk) }, () => ({
-      code: generateAccessCode(),
+      code: randCode(),
       total_seats: seats,
       amount,
       agent_name: agent || null,
@@ -1343,10 +1343,14 @@ function AgentsPanel() {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [editing, setEditing] = useState<any | null>(null);
+  const fetchAgents = useServerFn(listAgents);
+  const createAgent = useServerFn(addAgent);
+  const saveAgentRow = useServerFn(updateAgent);
+  const removeAgent = useServerFn(deleteAgent);
   const load = async () => {
     try {
-      const result = await listAgents();
-      setAgents(result.rows || []);
+      const result = await fetchAgents();
+      setAgents(result.agents || []);
     } catch (e: any) {
       toast.error(e?.message || "Could not load agents");
     }
@@ -1357,7 +1361,7 @@ function AgentsPanel() {
   const add = async () => {
     if (!name.trim()) return toast.error("Agent name required");
     try {
-      await addAgent({ name: name.trim(), phone: contact.trim() });
+      await createAgent({ data: { name: name.trim(), contact: contact.trim() } });
       setName("");
       setContact("");
       toast.success("Agent added");
@@ -1369,9 +1373,12 @@ function AgentsPanel() {
   const saveEdit = async () => {
     if (!editing?.name?.trim()) return toast.error("Agent name required");
     try {
-      await updateAgent(editing.id, {
-        name: editing.name.trim(),
-        contact: (editing.contact || "").trim(),
+      await saveAgentRow({
+        data: {
+          id: editing.id,
+          name: editing.name.trim(),
+          contact: (editing.contact || "").trim(),
+        },
       });
       setEditing(null);
       toast.success("Agent updated");
@@ -1383,7 +1390,7 @@ function AgentsPanel() {
   const del = async (id: string) => {
     if (!confirm("Delete this agent?")) return;
     try {
-      await deleteAgent(id);
+      await removeAgent({ data: { id } });
       toast.success("Agent deleted");
       load();
     } catch (e: any) {
@@ -1476,10 +1483,13 @@ function SettingsPanel() {
   const [solo, setSolo] = useState(5);
   const [pair, setPair] = useState(8);
   const [busy, setBusy] = useState(false);
+  const fetchSettings = useServerFn(getAppSettings);
+  const persistSettings = useServerFn(saveAppSettings);
+
   const load = async () => {
     try {
-      const result = await getAppSettings();
-      const data = result.data;
+      const result = await fetchSettings();
+      const data = result.settings;
       if (data) {
         setAgent(data.primary_agent_name || DEFAULT_VERIFIED_AGENT);
         setSolo(Number(data.solo_amount));
@@ -1497,7 +1507,9 @@ function SettingsPanel() {
     if (!agent.trim()) return toast.error("Agent name required");
     setBusy(true);
     try {
-      await saveAppSettings({ primary_agent_name: agent.trim(), solo_amount: solo, pair_amount: pair });
+      await persistSettings({
+        data: { primary_agent_name: agent.trim(), solo_amount: solo, pair_amount: pair },
+      });
       toast.success("Settings updated — visible everywhere");
     } catch (e: any) {
       toast.error(e?.message || "Could not save settings");

@@ -51,7 +51,7 @@ export async function getAppSettings() {
 export async function saveAppSettings(settings: Record<string, any>) {
   const { error } = await supabase
     .from("app_settings")
-    .update(settings as any)
+    .update(settings)
     .eq("id", true);
   if (error) throw new Error(error.message);
   return { ok: true };
@@ -69,7 +69,7 @@ export async function listAgents() {
 export async function addAgent(agent: { name: string; phone: string; email?: string }) {
   const { data, error } = await supabase
     .from("agents")
-    .insert([agent as any])
+    .insert([agent])
     .select()
     .single();
   if (error) throw new Error(error.message);
@@ -79,7 +79,7 @@ export async function addAgent(agent: { name: string; phone: string; email?: str
 export async function updateAgent(id: string, updates: Record<string, any>) {
   const { error } = await supabase
     .from("agents")
-    .update(updates as any)
+    .update(updates)
     .eq("id", id);
   if (error) throw new Error(error.message);
   return { ok: true };

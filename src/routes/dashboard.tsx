@@ -277,7 +277,7 @@ export default function Dashboard() {
                           size="sm"
                           className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0"
                         >
-                          <Link to={`/revise/${s.id}`}>
+                          <Link to="/revise/$setId" params={{ setId: s.id }}>
                             Learn <ArrowRight className="h-3 w-3 ml-1" />
                           </Link>
                         </Button>

@@ -58,7 +58,7 @@ export function AppHeader({ showBack = false, backTo = "/" }: { showBack?: boole
                   <Link to="/admin"><Shield className="h-4 w-4 mr-1" /> Admin</Link>
                 </Button>
               )}
-              <Button variant="ghost" size="sm" onClick={async () => { await signOut(); nav("/"); }} className="text-white hover:text-white hover:bg-white/10">
+              <Button variant="ghost" size="sm" onClick={async () => { await signOut(); nav({ to: "/" }); }} className="text-white hover:text-white hover:bg-white/10">
                 <LogOut className="h-4 w-4" />
               </Button>
             </>

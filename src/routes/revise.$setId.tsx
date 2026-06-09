@@ -13,10 +13,6 @@ import { useBookmarks, useMastery, summariseMastery } from "@/hooks/use-study-st
 
 export default function ReviseSet() {
   const { setId } = useParams<{ setId: string }>();
-  
-  if (!setId) {
-    return <div className="text-center mt-20">No topic selected</div>;
-  }
   const { user, profile, loading } = useAuth();
   const nav = useNavigate();
   const { hidden } = useScreenshotProtection();
