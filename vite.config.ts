@@ -12,6 +12,14 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: false,
+    middlewareMode: false,
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      '.vercel.app',
+      '.vercel.run',
+      'sb-5pzqeipghge7.vercel.run',
+    ],
   },
   build: {
     target: 'esnext',
