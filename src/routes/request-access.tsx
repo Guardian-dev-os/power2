@@ -18,11 +18,17 @@ function RequestAccessPage() {
   const [whatsapp, setWa] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
-  const [agentName, setAgentName] = useState<string>("Contact admin for agent details");
+  const [agentName, setAgentName] = useState<string>("Tinashe Lee Vurayai (+263 71 3043 376)");
 
   useEffect(() => {
-    supabase.from("app_settings").select("primary_agent_name").eq("id", true).maybeSingle()
-      .then(({ data }) => { if (data?.primary_agent_name) setAgentName(data.primary_agent_name); });
+    supabase
+      .from("app_settings")
+      .select("primary_agent_name")
+      .eq("id", true)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.primary_agent_name) setAgentName(data.primary_agent_name);
+      });
   }, []);
 
   const send = async () => {
@@ -44,7 +50,10 @@ function RequestAccessPage() {
   return (
     <div className="min-h-screen bg-hero flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-8 bg-card text-card-foreground shadow-card-elev">
-        <Link to="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
+        <Link
+          to="/"
+          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
+        >
           <ArrowLeft className="h-4 w-4 mr-1" /> Back
         </Link>
         <Link to="/" className="flex justify-center mb-6">
@@ -57,7 +66,9 @@ function RequestAccessPage() {
             <h2 className="text-2xl font-bold">Request received</h2>
             <p className="text-sm text-muted-foreground">
               Now pay an authorised agent in cash ($5 solo / $8 pair). The agent will notify admin
-              with your name. Once admin confirms payment, your <strong>access code will be sent via WhatsApp</strong>. Come back here and sign in with your full name + code.
+              with your name. Once admin confirms payment, your{" "}
+              <strong>access code will be sent via WhatsApp</strong>. Come back here and sign in
+              with your full name + code.
             </p>
             <Button onClick={() => nav({ to: "/sign-in" })} className="bg-brand-gradient w-full">
               Go to sign in
@@ -71,12 +82,21 @@ function RequestAccessPage() {
             </p>
             <div className="mt-4 rounded-md border border-secondary/40 bg-secondary/5 p-3 flex items-start gap-2 text-sm">
               <UserCheck className="h-4 w-4 text-secondary mt-0.5" />
-              <span>Authorised agent: <strong>{agentName}</strong></span>
+              <span>
+                <span className="mr-2 rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-semibold text-secondary">
+                  Verified ZIM Agent
+                </span>
+                <strong>{agentName}</strong>
+              </span>
             </div>
             <div className="space-y-3 mt-6">
               <div>
                 <Label>Full name *</Label>
-                <Input value={full_name} onChange={(e) => setName(e.target.value)} maxLength={120} />
+                <Input
+                  value={full_name}
+                  onChange={(e) => setName(e.target.value)}
+                  maxLength={120}
+                />
               </div>
               <div>
                 <Label>WhatsApp number *</Label>

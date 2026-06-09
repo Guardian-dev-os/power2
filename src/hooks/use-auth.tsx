@@ -19,6 +19,10 @@ interface AuthCtx {
   signOut: () => Promise<void>;
 }
 
+interface RoleRow {
+  role: string;
+}
+
 const Ctx = createContext<AuthCtx | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -34,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       supabase.from("user_roles").select("role").eq("user_id", uid),
     ]);
     setProfile(p as Profile | null);
-    setIsAdmin(!!roles?.some((r: any) => r.role === "admin"));
+    setIsAdmin(!!(roles as RoleRow[] | null)?.some((r) => r.role === "admin"));
   };
 
   useEffect(() => {
@@ -42,10 +46,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(s);
       setUser(s?.user ?? null);
       if (s?.user) {
-        setTimeout(() => loadProfile(s.user.id), 0);
+        setLoading(true);
+        setTimeout(() => loadProfile(s.user.id).finally(() => setLoading(false)), 0);
       } else {
         setProfile(null);
         setIsAdmin(false);
+        setLoading(false);
       }
     });
     supabase.auth.getSession().then(({ data }) => {
