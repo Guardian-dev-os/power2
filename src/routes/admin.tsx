@@ -12,7 +12,25 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Plus, Trash2, ShieldOff, ShieldCheck, Copy, Download, Search, Edit3, Save, X, Check, Send, Mail, AlertTriangle, Upload, UserPlus, UserCheck } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  ShieldOff,
+  ShieldCheck,
+  Copy,
+  Download,
+  Search,
+  Edit3,
+  Save,
+  X,
+  Check,
+  Send,
+  Mail,
+  AlertTriangle,
+  Upload,
+  UserPlus,
+  UserCheck,
+} from "lucide-react";
 import { accessApi } from "@/lib/access-api";
 import {
   addAgent,
@@ -65,15 +83,33 @@ function Admin() {
             <TabsTrigger value="settings">Settings</TabsTrigger>
             <TabsTrigger value="manual">User Manual</TabsTrigger>
           </TabsList>
-          <TabsContent value="requests"><RequestsPanel /></TabsContent>
-          <TabsContent value="codes"><CodesPanel /></TabsContent>
-          <TabsContent value="content"><ContentPanel /></TabsContent>
-          <TabsContent value="users"><UsersPanel /></TabsContent>
-          <TabsContent value="tickets"><TicketsPanel /></TabsContent>
-          <TabsContent value="payments"><PaymentsPanel /></TabsContent>
-          <TabsContent value="agents"><AgentsPanel /></TabsContent>
-          <TabsContent value="settings"><SettingsPanel /></TabsContent>
-          <TabsContent value="manual"><UserManualPanel /></TabsContent>
+          <TabsContent value="requests">
+            <RequestsPanel />
+          </TabsContent>
+          <TabsContent value="codes">
+            <CodesPanel />
+          </TabsContent>
+          <TabsContent value="content">
+            <ContentPanel />
+          </TabsContent>
+          <TabsContent value="users">
+            <UsersPanel />
+          </TabsContent>
+          <TabsContent value="tickets">
+            <TicketsPanel />
+          </TabsContent>
+          <TabsContent value="payments">
+            <PaymentsPanel />
+          </TabsContent>
+          <TabsContent value="agents">
+            <AgentsPanel />
+          </TabsContent>
+          <TabsContent value="settings">
+            <SettingsPanel />
+          </TabsContent>
+          <TabsContent value="manual">
+            <UserManualPanel />
+          </TabsContent>
         </Tabs>
       </main>
     </div>
@@ -99,20 +135,33 @@ function RequestsPanel() {
       setLoadingRows(false);
     }
   };
-  useEffect(() => { load(); }, [filter]);
+  useEffect(() => {
+    load();
+  }, [filter]);
 
   const approve = async (id: string) => {
     try {
       const res = await accessApi.approve({ request_id: id });
-      toast.success(`Approved. Code ${res.code} — copied. Send it via Gmail/WhatsApp from this row.`);
-      try { await navigator.clipboard?.writeText(res.code); } catch {}
+      toast.success(
+        `Approved. Code ${res.code} — copied. Send it via Gmail/WhatsApp from this row.`,
+      );
+      try {
+        await navigator.clipboard?.writeText(res.code);
+      } catch {}
       load();
-    } catch (e: any) { toast.error(e?.message || "Approval failed"); }
+    } catch (e: any) {
+      toast.error(e?.message || "Approval failed");
+    }
   };
   const reject = async (id: string) => {
     if (!confirm("Reject this request?")) return;
-    try { await accessApi.reject({ request_id: id }); toast.success("Rejected"); load(); }
-    catch (e: any) { toast.error(e?.message || "Failed"); }
+    try {
+      await accessApi.reject({ request_id: id });
+      toast.success("Rejected");
+      load();
+    } catch (e: any) {
+      toast.error(e?.message || "Failed");
+    }
   };
   const del = async (id: string) => {
     if (!confirm("Delete this request?")) return;
@@ -124,52 +173,118 @@ function RequestsPanel() {
       toast.error(e?.message || "Delete failed");
     }
   };
-  const copy = (code: string) => { navigator.clipboard?.writeText(code); toast.success(`Copied ${code}`); };
+  const copy = (code: string) => {
+    navigator.clipboard?.writeText(code);
+    toast.success(`Copied ${code}`);
+  };
 
   return (
     <div className="space-y-4 mt-4">
       <Card className="p-4 bg-amber-500/10 border-amber-500/40 text-card-foreground text-sm">
-        <p className="flex items-start gap-2"><AlertTriangle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />
-          <span><strong>Approval flow:</strong> Agent calls you with the name of the person who paid. Find their pending
-          request below and click <strong>Approve</strong> — a unique access code is generated and shown on the row.
-          Then send it manually using <strong>Open Gmail</strong> or <strong>Send via WhatsApp</strong> (both pre-fill the code).</span></p>
+        <p className="flex items-start gap-2">
+          <AlertTriangle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />
+          <span>
+            <strong>Approval flow:</strong> Agent calls you with the name of the person who paid.
+            Find their pending request below and click <strong>Approve</strong> — a unique access
+            code is generated and shown on the row. Then send it manually using{" "}
+            <strong>Open Gmail</strong> or <strong>Send via WhatsApp</strong> (both pre-fill the
+            code).
+          </span>
+        </p>
       </Card>
       <div className="flex gap-2">
-        <Button size="sm" variant={filter === "pending" ? "default" : "outline"} onClick={() => setFilter("pending")}>Pending</Button>
-        <Button size="sm" variant={filter === "all" ? "default" : "outline"} onClick={() => setFilter("all")}>All</Button>
-        <Button size="sm" variant="ghost" onClick={load} disabled={loadingRows}>Refresh</Button>
-        <div className="ml-auto text-sm text-muted-foreground self-center">{loadingRows ? "Loading…" : `${rows.length} request(s)`}</div>
+        <Button
+          size="sm"
+          variant={filter === "pending" ? "default" : "outline"}
+          onClick={() => setFilter("pending")}
+        >
+          Pending
+        </Button>
+        <Button
+          size="sm"
+          variant={filter === "all" ? "default" : "outline"}
+          onClick={() => setFilter("all")}
+        >
+          All
+        </Button>
+        <Button size="sm" variant="ghost" onClick={load} disabled={loadingRows}>
+          Refresh
+        </Button>
+        <div className="ml-auto text-sm text-muted-foreground self-center">
+          {loadingRows ? "Loading…" : `${rows.length} request(s)`}
+        </div>
       </div>
-      {!loadingRows && rows.length === 0 && <Card className="p-6 bg-card text-card-foreground text-sm text-muted-foreground">No requests.</Card>}
-      {rows.map(r => (
+      {!loadingRows && rows.length === 0 && (
+        <Card className="p-6 bg-card text-card-foreground text-sm text-muted-foreground">
+          No requests.
+        </Card>
+      )}
+      {rows.map((r) => (
         <Card key={r.id} className="p-5 bg-card text-card-foreground">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h4 className="font-semibold">{r.full_name}</h4>
-                <Badge variant={r.status === "approved" ? "default" : r.status === "rejected" ? "destructive" : "outline"}>{r.status}</Badge>
+                <Badge
+                  variant={
+                    r.status === "approved"
+                      ? "default"
+                      : r.status === "rejected"
+                        ? "destructive"
+                        : "outline"
+                  }
+                >
+                  {r.status}
+                </Badge>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">📱 <a className="underline" href={`https://wa.me/${r.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noreferrer">{r.whatsapp}</a></p>
-              {r.email && <p className="text-sm text-muted-foreground">✉️ <a href={`mailto:${r.email}`} className="underline">{r.email}</a></p>}
+              <p className="text-sm text-muted-foreground mt-1">
+                📱{" "}
+                <a
+                  className="underline"
+                  href={`https://wa.me/${r.whatsapp.replace(/[^0-9]/g, "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {r.whatsapp}
+                </a>
+              </p>
+              {r.email && (
+                <p className="text-sm text-muted-foreground">
+                  ✉️{" "}
+                  <a href={`mailto:${r.email}`} className="underline">
+                    {r.email}
+                  </a>
+                </p>
+              )}
               {r.generated_code && (
                 <div className="mt-3 p-3 rounded bg-secondary/10 border border-secondary/40">
-                  <p className="text-xs text-secondary uppercase tracking-wider font-semibold mb-1">Access code</p>
+                  <p className="text-xs text-secondary uppercase tracking-wider font-semibold mb-1">
+                    Access code
+                  </p>
                   <div className="flex items-center gap-2">
                     <code className="text-lg font-mono font-bold">{r.generated_code}</code>
-                    <Button size="sm" variant="ghost" onClick={() => copy(r.generated_code)}><Copy className="h-3 w-3" /></Button>
+                    <Button size="sm" variant="ghost" onClick={() => copy(r.generated_code)}>
+                      <Copy className="h-3 w-3" />
+                    </Button>
                   </div>
                 </div>
               )}
-              <p className="text-xs text-muted-foreground mt-2">Submitted {new Date(r.created_at).toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground mt-2">
+                Submitted {new Date(r.created_at).toLocaleString()}
+              </p>
             </div>
             <div className="flex gap-2 flex-wrap">
               {r.status === "pending" && (
                 <>
-                  <Button size="sm" onClick={() => approve(r.id)} className="bg-brand-gradient"><Check className="h-4 w-4 mr-1" /> Approve & generate code</Button>
-                  <Button size="sm" variant="outline" onClick={() => reject(r.id)}><X className="h-4 w-4 mr-1" /> Reject</Button>
+                  <Button size="sm" onClick={() => approve(r.id)} className="bg-brand-gradient">
+                    <Check className="h-4 w-4 mr-1" /> Approve & generate code
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => reject(r.id)}>
+                    <X className="h-4 w-4 mr-1" /> Reject
+                  </Button>
                 </>
               )}
-      {r.status === "approved" && r.generated_code && (
+              {r.status === "approved" && r.generated_code && (
                 <>
                   <Button
                     size="sm"
@@ -177,12 +292,12 @@ function RequestsPanel() {
                     onClick={() => {
                       const subject = encodeURIComponent("Your Access Code");
                       const body = encodeURIComponent(
-                        `Hi ${r.full_name},\n\nYour access code: ${r.generated_code}\n\nSign in with your full name and this code.\n\nThanks.`
+                        `Hi ${r.full_name},\n\nYour access code: ${r.generated_code}\n\nSign in with your full name and this code.\n\nThanks.`,
                       );
                       const to = r.email ? encodeURIComponent(r.email) : "";
                       window.open(
                         `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`,
-                        "_blank"
+                        "_blank",
                       );
                     }}
                   >
@@ -194,7 +309,7 @@ function RequestsPanel() {
                     onClick={() => {
                       const phone = (r.whatsapp || "").replace(/[^0-9]/g, "");
                       const text = encodeURIComponent(
-                        `Hi ${r.full_name}, your access code is: ${r.generated_code}\n\nSign in with your full name and this code.`
+                        `Hi ${r.full_name}, your access code is: ${r.generated_code}\n\nSign in with your full name and this code.`,
                       );
                       window.open(`https://wa.me/${phone}?text=${text}`, "_blank");
                     }}
@@ -203,7 +318,9 @@ function RequestsPanel() {
                   </Button>
                 </>
               )}
-              <Button size="sm" variant="ghost" onClick={() => del(r.id)}><Trash2 className="h-4 w-4" /></Button>
+              <Button size="sm" variant="ghost" onClick={() => del(r.id)}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </Card>
@@ -222,20 +339,33 @@ function CodesPanel() {
   const [search, setSearch] = useState("");
 
   const load = async () => {
-    const { data } = await supabase.from("access_codes").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase
+      .from("access_codes")
+      .select("*")
+      .order("created_at", { ascending: false });
     setCodes(data || []);
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const generate = async () => {
-    const assignedList = assigned.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+    const assignedList = assigned
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
     const rows = Array.from({ length: Math.max(1, bulk) }, () => ({
-      code: randCode(), total_seats: seats, amount, agent_name: agent || null, assigned_emails: assignedList,
+      code: randCode(),
+      total_seats: seats,
+      amount,
+      agent_name: agent || null,
+      assigned_emails: assignedList,
     }));
     const { error } = await supabase.from("access_codes").insert(rows);
     if (error) return toast.error(error.message);
     toast.success(`Generated ${rows.length} code${rows.length > 1 ? "s" : ""}`);
-    setAgent(""); setAssigned("");
+    setAgent("");
+    setAssigned("");
     load();
   };
 
@@ -245,66 +375,140 @@ function CodesPanel() {
     load();
   };
 
-  const copy = (code: string) => { navigator.clipboard?.writeText(code); toast.success(`Copied ${code}`); };
+  const copy = (code: string) => {
+    navigator.clipboard?.writeText(code);
+    toast.success(`Copied ${code}`);
+  };
 
   const exportCsv = () => {
     const header = "code,seats_used,seats_total,amount,agent,assigned,created_at\n";
-    const rows = codes.map(c => `${c.code},${c.used_seats},${c.total_seats},${c.amount},"${c.agent_name || ""}","${(c.assigned_emails || []).join(";")}",${c.created_at}`).join("\n");
+    const rows = codes
+      .map(
+        (c) =>
+          `${c.code},${c.used_seats},${c.total_seats},${c.amount},"${c.agent_name || ""}","${(c.assigned_emails || []).join(";")}",${c.created_at}`,
+      )
+      .join("\n");
     const blob = new Blob([header + rows], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url; a.download = `access-codes-${Date.now()}.csv`; a.click();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `access-codes-${Date.now()}.csv`;
+    a.click();
     URL.revokeObjectURL(url);
   };
 
-  const filtered = codes.filter(c => !search ||
-    c.code.toLowerCase().includes(search.toLowerCase()) ||
-    (c.agent_name || "").toLowerCase().includes(search.toLowerCase()) ||
-    (c.assigned_emails || []).join(",").toLowerCase().includes(search.toLowerCase()));
-
+  const filtered = codes.filter(
+    (c) =>
+      !search ||
+      c.code.toLowerCase().includes(search.toLowerCase()) ||
+      (c.agent_name || "").toLowerCase().includes(search.toLowerCase()) ||
+      (c.assigned_emails || []).join(",").toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
     <div className="space-y-6 mt-4">
       <Card className="p-6 bg-card text-card-foreground">
         <h3 className="font-semibold mb-3">Generate code(s)</h3>
         <div className="grid md:grid-cols-5 gap-3">
-          <div><Label>Quantity</Label><Input type="number" min={1} max={100} value={bulk} onChange={e => setBulk(+e.target.value)} /></div>
-          <div><Label>Seats per code</Label><Input type="number" min={1} value={seats} onChange={e => setSeats(+e.target.value)} /></div>
-          <div><Label>Amount ($)</Label><Input type="number" min={0} step="0.01" value={amount} onChange={e => setAmount(+e.target.value)} /></div>
-          <div><Label>Agent name</Label><Input value={agent} onChange={e => setAgent(e.target.value)} /></div>
-          <div><Label>Assigned emails (comma)</Label><Input value={assigned} onChange={e => setAssigned(e.target.value)} placeholder="optional" /></div>
+          <div>
+            <Label>Quantity</Label>
+            <Input
+              type="number"
+              min={1}
+              max={100}
+              value={bulk}
+              onChange={(e) => setBulk(+e.target.value)}
+            />
+          </div>
+          <div>
+            <Label>Seats per code</Label>
+            <Input
+              type="number"
+              min={1}
+              value={seats}
+              onChange={(e) => setSeats(+e.target.value)}
+            />
+          </div>
+          <div>
+            <Label>Amount ($)</Label>
+            <Input
+              type="number"
+              min={0}
+              step="0.01"
+              value={amount}
+              onChange={(e) => setAmount(+e.target.value)}
+            />
+          </div>
+          <div>
+            <Label>Agent name</Label>
+            <Input value={agent} onChange={(e) => setAgent(e.target.value)} />
+          </div>
+          <div>
+            <Label>Assigned emails (comma)</Label>
+            <Input
+              value={assigned}
+              onChange={(e) => setAssigned(e.target.value)}
+              placeholder="optional"
+            />
+          </div>
         </div>
-        <Button onClick={generate} className="mt-4 bg-brand-gradient"><Plus className="h-4 w-4 mr-1" /> Generate</Button>
+        <Button onClick={generate} className="mt-4 bg-brand-gradient">
+          <Plus className="h-4 w-4 mr-1" /> Generate
+        </Button>
       </Card>
 
       <Card className="p-4 bg-card text-card-foreground">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[200px]">
             <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search code, agent, email..." className="pl-9" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search code, agent, email..."
+              className="pl-9"
+            />
           </div>
-          <Button variant="outline" onClick={exportCsv}><Download className="h-4 w-4 mr-1" /> Export CSV</Button>
-          <div className="text-sm text-muted-foreground">{filtered.length} of {codes.length} codes</div>
+          <Button variant="outline" onClick={exportCsv}>
+            <Download className="h-4 w-4 mr-1" /> Export CSV
+          </Button>
+          <div className="text-sm text-muted-foreground">
+            {filtered.length} of {codes.length} codes
+          </div>
         </div>
       </Card>
 
       <Card className="p-0 bg-card text-card-foreground overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-muted/40"><tr>
-            <th className="text-left p-3">Code</th><th className="text-left p-3">Seats</th>
-            <th className="text-left p-3">Amount</th><th className="text-left p-3">Agent</th>
-            <th className="text-left p-3">Assigned</th><th></th>
-          </tr></thead>
+          <thead className="bg-muted/40">
+            <tr>
+              <th className="text-left p-3">Code</th>
+              <th className="text-left p-3">Seats</th>
+              <th className="text-left p-3">Amount</th>
+              <th className="text-left p-3">Agent</th>
+              <th className="text-left p-3">Assigned</th>
+              <th></th>
+            </tr>
+          </thead>
           <tbody>
-            {filtered.map(c => (
+            {filtered.map((c) => (
               <tr key={c.id} className="border-t border-border/40">
-                <td className="p-3 font-mono flex items-center gap-2">{c.code}
-                  <Button variant="ghost" size="sm" onClick={() => copy(c.code)}><Copy className="h-3 w-3" /></Button>
+                <td className="p-3 font-mono flex items-center gap-2">
+                  {c.code}
+                  <Button variant="ghost" size="sm" onClick={() => copy(c.code)}>
+                    <Copy className="h-3 w-3" />
+                  </Button>
                 </td>
-                <td className="p-3">{c.used_seats}/{c.total_seats}</td>
+                <td className="p-3">
+                  {c.used_seats}/{c.total_seats}
+                </td>
                 <td className="p-3">${c.amount}</td>
                 <td className="p-3">{c.agent_name || "_"}</td>
                 <td className="p-3 text-xs">{(c.assigned_emails || []).join(", ") || "any"}</td>
-                <td className="p-3"><Button variant="ghost" size="sm" onClick={() => del(c.id)}><Trash2 className="h-4 w-4" /></Button></td>
+                <td className="p-3">
+                  <Button variant="ghost" size="sm" onClick={() => del(c.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -314,70 +518,96 @@ function CodesPanel() {
   );
 }
 
-
 function ContentPanel() {
   const [sets, setSets] = useState<any[]>([]);
   const [activeSet, setActiveSet] = useState<string>("");
   const [cards, setCards] = useState<any[]>([]);
-  const [q, setQ] = useState(""); const [a, setA] = useState("");
+  const [q, setQ] = useState("");
+  const [a, setA] = useState("");
   const [limit, setLimit] = useState(5);
   const [newSetTitle, setNewSetTitle] = useState("");
   const [newSetDesc, setNewSetDesc] = useState("");
   const [editing, setEditing] = useState<string | null>(null);
-  const [editQ, setEditQ] = useState(""); const [editA, setEditA] = useState("");
+  const [editQ, setEditQ] = useState("");
+  const [editA, setEditA] = useState("");
 
   const loadSets = async () => {
     const { data } = await supabase.from("topic_sets").select("*").order("order_index");
     setSets(data || []);
     if (data && data[0] && !activeSet) setActiveSet(data[0].id);
   };
-  useEffect(() => { loadSets(); }, []);
+  useEffect(() => {
+    loadSets();
+  }, []);
 
   const loadCards = async () => {
     if (!activeSet) return;
-    const { data } = await supabase.from("cards").select("*").eq("topic_set_id", activeSet).order("order_index");
+    const { data } = await supabase
+      .from("cards")
+      .select("*")
+      .eq("topic_set_id", activeSet)
+      .order("order_index");
     setCards(data || []);
   };
 
   useEffect(() => {
     loadCards();
-    const s = sets.find(s => s.id === activeSet);
+    const s = sets.find((s) => s.id === activeSet);
     if (s) setLimit(s.free_card_limit);
   }, [activeSet, sets]);
 
   const addCard = async () => {
     if (!q.trim() || !a.trim()) return;
     const order = cards.length + 1;
-    const { error } = await supabase.from("cards").insert({ topic_set_id: activeSet, question: q, answer: a, order_index: order });
+    const { error } = await supabase
+      .from("cards")
+      .insert({ topic_set_id: activeSet, question: q, answer: a, order_index: order });
     if (error) return toast.error(error.message);
-    toast.success("Card added"); setQ(""); setA(""); loadCards();
+    toast.success("Card added");
+    setQ("");
+    setA("");
+    loadCards();
   };
 
   const delCard = async (id: string) => {
     if (!confirm("Delete card?")) return;
     await supabase.from("cards").delete().eq("id", id);
-    setCards(c => c.filter(x => x.id !== id));
+    setCards((c) => c.filter((x) => x.id !== id));
   };
 
-  const startEdit = (c: any) => { setEditing(c.id); setEditQ(c.question); setEditA(c.answer); };
+  const startEdit = (c: any) => {
+    setEditing(c.id);
+    setEditQ(c.question);
+    setEditA(c.answer);
+  };
   const saveEdit = async () => {
     if (!editing) return;
     await supabase.from("cards").update({ question: editQ, answer: editA }).eq("id", editing);
-    setEditing(null); toast.success("Card updated"); loadCards();
+    setEditing(null);
+    toast.success("Card updated");
+    loadCards();
   };
 
   const updateLimit = async () => {
     await supabase.from("topic_sets").update({ free_card_limit: limit }).eq("id", activeSet);
-    toast.success("Free limit updated"); loadSets();
+    toast.success("Free limit updated");
+    loadSets();
   };
 
   const createSet = async () => {
     if (!newSetTitle.trim()) return;
     const order = sets.length + 1;
-    const { data, error } = await supabase.from("topic_sets").insert({ title: newSetTitle, description: newSetDesc, order_index: order }).select().single();
+    const { data, error } = await supabase
+      .from("topic_sets")
+      .insert({ title: newSetTitle, description: newSetDesc, order_index: order })
+      .select()
+      .single();
     if (error) return toast.error(error.message);
-    toast.success("Topic set created"); setNewSetTitle(""); setNewSetDesc("");
-    await loadSets(); if (data) setActiveSet(data.id);
+    toast.success("Topic set created");
+    setNewSetTitle("");
+    setNewSetDesc("");
+    await loadSets();
+    if (data) setActiveSet(data.id);
   };
 
   const deleteSet = async () => {
@@ -385,7 +615,8 @@ function ContentPanel() {
     if (!confirm("Delete this topic set and ALL its cards?")) return;
     await supabase.from("cards").delete().eq("topic_set_id", activeSet);
     await supabase.from("topic_sets").delete().eq("id", activeSet);
-    setActiveSet(""); loadSets();
+    setActiveSet("");
+    loadSets();
   };
 
   return (
@@ -393,38 +624,87 @@ function ContentPanel() {
       <Card className="p-6 bg-card text-card-foreground">
         <h3 className="font-semibold mb-3">Create new topic set</h3>
         <div className="grid md:grid-cols-3 gap-3">
-          <Input placeholder="Title (e.g. Paper 3 _ Boolean Algebra)" value={newSetTitle} onChange={e => setNewSetTitle(e.target.value)} />
-          <Input placeholder="Description" value={newSetDesc} onChange={e => setNewSetDesc(e.target.value)} />
-          <Button onClick={createSet} className="bg-brand-gradient"><Plus className="h-4 w-4 mr-1" /> Create</Button>
+          <Input
+            placeholder="Title (e.g. Paper 3 _ Boolean Algebra)"
+            value={newSetTitle}
+            onChange={(e) => setNewSetTitle(e.target.value)}
+          />
+          <Input
+            placeholder="Description"
+            value={newSetDesc}
+            onChange={(e) => setNewSetDesc(e.target.value)}
+          />
+          <Button onClick={createSet} className="bg-brand-gradient">
+            <Plus className="h-4 w-4 mr-1" /> Create
+          </Button>
         </div>
       </Card>
 
       <Card className="p-6 bg-card text-card-foreground">
         <Label>Active topic set</Label>
         <div className="flex gap-2 mt-1">
-          <select value={activeSet} onChange={e => setActiveSet(e.target.value)} className="flex-1 rounded-md border border-input bg-background text-foreground p-2">
-            {sets.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
+          <select
+            value={activeSet}
+            onChange={(e) => setActiveSet(e.target.value)}
+            className="flex-1 rounded-md border border-input bg-background text-foreground p-2"
+          >
+            {sets.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.title}
+              </option>
+            ))}
           </select>
-          <Button variant="destructive" onClick={deleteSet}><Trash2 className="h-4 w-4" /></Button>
+          <Button variant="destructive" onClick={deleteSet}>
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </div>
         <div className="mt-3 flex items-end gap-3">
-          <div><Label>Free card limit</Label><Input type="number" value={limit} onChange={e => setLimit(+e.target.value)} className="w-32" /></div>
+          <div>
+            <Label>Free card limit</Label>
+            <Input
+              type="number"
+              value={limit}
+              onChange={(e) => setLimit(+e.target.value)}
+              className="w-32"
+            />
+          </div>
           <Button onClick={updateLimit}>Save limit</Button>
-          <div className="text-sm text-muted-foreground ml-auto">{cards.length} cards in this set</div>
+          <div className="text-sm text-muted-foreground ml-auto">
+            {cards.length} cards in this set
+          </div>
         </div>
       </Card>
 
       <Card className="p-6 bg-card text-card-foreground">
         <h3 className="font-semibold mb-3">Add card</h3>
         <p className="text-xs text-muted-foreground mb-2">
-          Math: wrap inline in <code>$...$</code>, block in <code>$$...$$</code>. ASCII art: triple backticks.
-          Real SVG diagrams: <code>```diagram closed-loop```</code>. Available:
-          closed-loop, open-loop, dcs-pyramid, pneumatic-valve, butterfly-valve, bode, nyquist, root-locus, plc-architecture.
+          Math: wrap inline in <code>$...$</code>, block in <code>$$...$$</code>. ASCII art: triple
+          backticks. Real SVG diagrams: <code>```diagram closed-loop```</code>. Available:
+          closed-loop, open-loop, dcs-pyramid, pneumatic-valve, butterfly-valve, bode, nyquist,
+          root-locus, plc-architecture.
         </p>
         <div className="space-y-2">
-          <div><Label>Question</Label><textarea value={q} onChange={e => setQ(e.target.value)} rows={2} className="w-full rounded-md border border-input bg-background text-foreground p-2 text-sm" /></div>
-          <div><Label>Answer</Label><textarea value={a} onChange={e => setA(e.target.value)} rows={5} className="w-full rounded-md border border-input bg-background text-foreground p-2 text-sm font-mono" /></div>
-          <Button onClick={addCard} className="bg-brand-gradient"><Plus className="h-4 w-4 mr-1" /> Add card</Button>
+          <div>
+            <Label>Question</Label>
+            <textarea
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              rows={2}
+              className="w-full rounded-md border border-input bg-background text-foreground p-2 text-sm"
+            />
+          </div>
+          <div>
+            <Label>Answer</Label>
+            <textarea
+              value={a}
+              onChange={(e) => setA(e.target.value)}
+              rows={5}
+              className="w-full rounded-md border border-input bg-background text-foreground p-2 text-sm font-mono"
+            />
+          </div>
+          <Button onClick={addCard} className="bg-brand-gradient">
+            <Plus className="h-4 w-4 mr-1" /> Add card
+          </Button>
         </div>
       </Card>
 
@@ -432,29 +712,55 @@ function ContentPanel() {
 
       <Card className="p-0 bg-card text-card-foreground overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-muted/40"><tr><th className="text-left p-3 w-12">#</th><th className="text-left p-3">Question</th><th className="w-32"></th></tr></thead>
+          <thead className="bg-muted/40">
+            <tr>
+              <th className="text-left p-3 w-12">#</th>
+              <th className="text-left p-3">Question</th>
+              <th className="w-32"></th>
+            </tr>
+          </thead>
           <tbody>
-            {cards.map(c => (
+            {cards.map((c) => (
               <tr key={c.id} className="border-t border-border/40 align-top">
                 <td className="p-3">{c.order_index}</td>
                 <td className="p-3">
                   {editing === c.id ? (
                     <div className="space-y-2">
-                      <textarea value={editQ} onChange={e => setEditQ(e.target.value)} rows={2} className="w-full rounded-md border border-input bg-background text-foreground p-2 text-sm" />
-                      <textarea value={editA} onChange={e => setEditA(e.target.value)} rows={5} className="w-full rounded-md border border-input bg-background text-foreground p-2 text-sm font-mono" />
+                      <textarea
+                        value={editQ}
+                        onChange={(e) => setEditQ(e.target.value)}
+                        rows={2}
+                        className="w-full rounded-md border border-input bg-background text-foreground p-2 text-sm"
+                      />
+                      <textarea
+                        value={editA}
+                        onChange={(e) => setEditA(e.target.value)}
+                        rows={5}
+                        className="w-full rounded-md border border-input bg-background text-foreground p-2 text-sm font-mono"
+                      />
                     </div>
-                  ) : c.question}
+                  ) : (
+                    c.question
+                  )}
                 </td>
                 <td className="p-3 text-right">
                   {editing === c.id ? (
                     <>
-                      <Button variant="ghost" size="sm" onClick={saveEdit}><Save className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" onClick={() => setEditing(null)}><X className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={saveEdit}>
+                        <Save className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>
+                        <X className="h-4 w-4" />
+                      </Button>
                     </>
                   ) : (
                     <>
-                      <Button variant="ghost" size="sm" onClick={() => startEdit(c)}><Edit3 className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" onClick={() => delCard(c.id)}><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => startEdit(c)}>
+                        <Edit3 className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => delCard(c.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </>
                   )}
                 </td>
@@ -465,7 +771,6 @@ function ContentPanel() {
       </Card>
     </div>
   );
-
 }
 
 // _____________________________________________________________________________
@@ -565,7 +870,8 @@ function BulkImportCard({
 
   const importCards = async () => {
     if (!activeSet) return toast.error("Pick a topic set first.");
-    if (preview.length === 0) return toast.error("No Q/A pairs detected. Use 'Q:' and 'A:' labels.");
+    if (preview.length === 0)
+      return toast.error("No Q/A pairs detected. Use 'Q:' and 'A:' labels.");
     setBusy(true);
     const rows = preview.map((c, i) => ({
       topic_set_id: activeSet,
@@ -585,10 +891,13 @@ function BulkImportCard({
     <Card className="p-6 bg-card text-card-foreground border-secondary/30">
       <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
         <div>
-          <h3 className="font-semibold flex items-center gap-2"><Upload className="h-4 w-4 text-secondary" /> Bulk-import from Markdown</h3>
+          <h3 className="font-semibold flex items-center gap-2">
+            <Upload className="h-4 w-4 text-secondary" /> Bulk-import from Markdown
+          </h3>
           <p className="text-xs text-muted-foreground mt-1">
-            Paste a whole exam paper. Asterisks/bold are stripped automatically. Diagrams and tables in the
-            answer body are kept intact. Each card needs a <code>Q:</code> and <code>A:</code> label.
+            Paste a whole exam paper. Asterisks/bold are stripped automatically. Diagrams and tables
+            in the answer body are kept intact. Each card needs a <code>Q:</code> and{" "}
+            <code>A:</code> label.
           </p>
         </div>
         <Badge variant={preview.length > 0 ? "default" : "outline"}>
@@ -597,7 +906,9 @@ function BulkImportCard({
       </div>
 
       <details className="mb-3 text-xs text-muted-foreground">
-        <summary className="cursor-pointer hover:text-foreground">Example format (click to expand)</summary>
+        <summary className="cursor-pointer hover:text-foreground">
+          Example format (click to expand)
+        </summary>
         <pre className="mt-2 p-3 bg-muted/30 rounded text-xs whitespace-pre-wrap">{`Q: State Ohm's law.
 A: V = I R. The voltage across a resistor equals the current through it times its resistance.
 
@@ -624,17 +935,30 @@ The setpoint R(s) goes into a summing junction; the error E(s) drives the contro
           <div className="font-semibold mb-2">Preview</div>
           {preview.slice(0, 5).map((c, i) => (
             <div key={i} className="mb-2 pb-2 border-b border-border/40 last:border-0">
-              <div><strong>Q{i + 1}:</strong> {c.question.slice(0, 120)}{c.question.length > 120 ? "..." : ""}</div>
-              <div className="text-muted-foreground"><strong>A:</strong> {c.answer.slice(0, 160)}{c.answer.length > 160 ? "..." : ""}</div>
+              <div>
+                <strong>Q{i + 1}:</strong> {c.question.slice(0, 120)}
+                {c.question.length > 120 ? "..." : ""}
+              </div>
+              <div className="text-muted-foreground">
+                <strong>A:</strong> {c.answer.slice(0, 160)}
+                {c.answer.length > 160 ? "..." : ""}
+              </div>
             </div>
           ))}
-          {preview.length > 5 && <div className="text-muted-foreground">...and {preview.length - 5} more</div>}
+          {preview.length > 5 && (
+            <div className="text-muted-foreground">...and {preview.length - 5} more</div>
+          )}
         </div>
       )}
 
       <div className="flex gap-2 mt-3">
-        <Button onClick={importCards} disabled={busy || preview.length === 0} className="bg-brand-gradient">
-          <Upload className="h-4 w-4 mr-1" /> Import {preview.length > 0 ? `${preview.length} card${preview.length === 1 ? "" : "s"}` : ""}
+        <Button
+          onClick={importCards}
+          disabled={busy || preview.length === 0}
+          className="bg-brand-gradient"
+        >
+          <Upload className="h-4 w-4 mr-1" /> Import{" "}
+          {preview.length > 0 ? `${preview.length} card${preview.length === 1 ? "" : "s"}` : ""}
         </Button>
         <Button variant="outline" onClick={() => setText("")} disabled={busy || !text}>
           <X className="h-4 w-4 mr-1" /> Clear
@@ -651,25 +975,46 @@ function UsersPanel() {
   const [deleteConfirm, setDeleteConfirm] = useState<Record<string, number>>({});
 
   const load = async () => {
-    const { data: u } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
+    const { data: u } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false });
     setUsers(u || []);
     // Codes issued/bound directly to the user
-    const { data: bound } = await supabase.from("access_codes").select("id, code, amount, total_seats, used_seats, agent_name, bound_user_id, created_at");
+    const { data: bound } = await supabase
+      .from("access_codes")
+      .select("id, code, amount, total_seats, used_seats, agent_name, bound_user_id, created_at");
     // Codes the user redeemed
-    const { data: usage } = await supabase.from("access_code_usage").select("user_id, used_at, access_codes(code, amount, agent_name)");
+    const { data: usage } = await supabase
+      .from("access_code_usage")
+      .select("user_id, used_at, access_codes(code, amount, agent_name)");
     const map: Record<string, any[]> = {};
     (bound || []).forEach((c: any) => {
       if (!c.bound_user_id) return;
-      (map[c.bound_user_id] ||= []).push({ code: c.code, amount: c.amount, agent: c.agent_name, source: "issued", at: c.created_at });
+      (map[c.bound_user_id] ||= []).push({
+        code: c.code,
+        amount: c.amount,
+        agent: c.agent_name,
+        source: "issued",
+        at: c.created_at,
+      });
     });
     (usage || []).forEach((r: any) => {
       const c = r.access_codes;
       if (!c) return;
-      (map[r.user_id] ||= []).push({ code: c.code, amount: c.amount, agent: c.agent_name, source: "redeemed", at: r.used_at });
+      (map[r.user_id] ||= []).push({
+        code: c.code,
+        amount: c.amount,
+        agent: c.agent_name,
+        source: "redeemed",
+        at: r.used_at,
+      });
     });
     setCodesByUser(map);
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const toggle = async (u: any) => {
     const next = u.access_level === "full" ? "free" : "full";
@@ -678,14 +1023,14 @@ function UsersPanel() {
   };
 
   const handleUserNameClick = (userId: string) => {
-    setDeleteConfirm(prev => ({
+    setDeleteConfirm((prev) => ({
       ...prev,
-      [userId]: (prev[userId] || 0) + 1
+      [userId]: (prev[userId] || 0) + 1,
     }));
     setTimeout(() => {
-      setDeleteConfirm(prev => ({
+      setDeleteConfirm((prev) => ({
         ...prev,
-        [userId]: 0
+        [userId]: 0,
       }));
     }, 1000);
   };
@@ -694,20 +1039,24 @@ function UsersPanel() {
     try {
       await supabase.from("profiles").delete().eq("id", userId);
       toast.success("User deleted");
-      setDeleteConfirm(prev => ({ ...prev, [userId]: 0 }));
+      setDeleteConfirm((prev) => ({ ...prev, [userId]: 0 }));
       load();
     } catch (e: any) {
       toast.error(e?.message || "Delete failed");
     }
   };
 
-  const copy = (s: string) => { navigator.clipboard?.writeText(s); toast.success(`Copied ${s}`); };
+  const copy = (s: string) => {
+    navigator.clipboard?.writeText(s);
+    toast.success(`Copied ${s}`);
+  };
 
-  const filtered = users.filter(u =>
-    !search ||
-    (u.email || "").toLowerCase().includes(search.toLowerCase()) ||
-    (u.full_name || "").toLowerCase().includes(search.toLowerCase()) ||
-    (codesByUser[u.id] || []).some((c) => c.code.toLowerCase().includes(search.toLowerCase()))
+  const filtered = users.filter(
+    (u) =>
+      !search ||
+      (u.email || "").toLowerCase().includes(search.toLowerCase()) ||
+      (u.full_name || "").toLowerCase().includes(search.toLowerCase()) ||
+      (codesByUser[u.id] || []).some((c) => c.code.toLowerCase().includes(search.toLowerCase())),
   );
 
   return (
@@ -716,31 +1065,52 @@ function UsersPanel() {
       <Card className="p-4 bg-card text-card-foreground">
         <div className="relative">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search user or code..." className="pl-9" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search user or code..."
+            className="pl-9"
+          />
         </div>
       </Card>
       <Card className="p-0 bg-card text-card-foreground overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-muted/40"><tr>
-            <th className="text-left p-3">Email</th>
-            <th className="text-left p-3">Name</th>
-            <th className="text-left p-3">Access</th>
-            <th className="text-left p-3">Access codes</th>
-            <th></th>
-          </tr></thead>
+          <thead className="bg-muted/40">
+            <tr>
+              <th className="text-left p-3">Email</th>
+              <th className="text-left p-3">Name</th>
+              <th className="text-left p-3">Access</th>
+              <th className="text-left p-3">Access codes</th>
+              <th></th>
+            </tr>
+          </thead>
           <tbody>
-            {filtered.map(u => {
+            {filtered.map((u) => {
               const codes = codesByUser[u.id] || [];
               const tapCount = deleteConfirm[u.id] || 0;
               const showDelete = tapCount >= 3;
               return (
                 <tr key={u.id} className="border-t border-border/40 align-top">
                   <td className="p-3 break-all">{u.email}</td>
-                  <td className="p-3 cursor-pointer hover:underline select-none" onClick={() => handleUserNameClick(u.id)} title={tapCount >= 3 ? "Tap once more to delete" : `Tap ${3 - tapCount} more times to delete`}>
+                  <td
+                    className="p-3 cursor-pointer hover:underline select-none"
+                    onClick={() => handleUserNameClick(u.id)}
+                    title={
+                      tapCount >= 3
+                        ? "Tap once more to delete"
+                        : `Tap ${3 - tapCount} more times to delete`
+                    }
+                  >
                     {u.full_name || "_"}
-                    {tapCount > 0 && <span className="text-xs text-muted-foreground ml-2">({tapCount}/3)</span>}
+                    {tapCount > 0 && (
+                      <span className="text-xs text-muted-foreground ml-2">({tapCount}/3)</span>
+                    )}
                   </td>
-                  <td className="p-3"><Badge variant={u.access_level === "full" ? "default" : "outline"}>{u.access_level}</Badge></td>
+                  <td className="p-3">
+                    <Badge variant={u.access_level === "full" ? "default" : "outline"}>
+                      {u.access_level}
+                    </Badge>
+                  </td>
                   <td className="p-3">
                     {codes.length === 0 ? (
                       <span className="text-xs text-muted-foreground">_</span>
@@ -748,10 +1118,23 @@ function UsersPanel() {
                       <div className="space-y-1">
                         {codes.map((c, i) => (
                           <div key={i} className="flex items-center gap-2 flex-wrap">
-                            <code className="font-mono text-xs bg-secondary/10 border border-secondary/30 rounded px-2 py-0.5">{c.code}</code>
-                            <Button variant="ghost" size="sm" className="h-6 px-1" onClick={() => copy(c.code)}><Copy className="h-3 w-3" /></Button>
-                            <Badge variant="outline" className="text-[10px]">{c.source}</Badge>
-                            {c.agent && <span className="text-[11px] text-muted-foreground">· {c.agent}</span>}
+                            <code className="font-mono text-xs bg-secondary/10 border border-secondary/30 rounded px-2 py-0.5">
+                              {c.code}
+                            </code>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 px-1"
+                              onClick={() => copy(c.code)}
+                            >
+                              <Copy className="h-3 w-3" />
+                            </Button>
+                            <Badge variant="outline" className="text-[10px]">
+                              {c.source}
+                            </Badge>
+                            {c.agent && (
+                              <span className="text-[11px] text-muted-foreground">· {c.agent}</span>
+                            )}
                             <span className="text-[11px] text-muted-foreground">· ${c.amount}</span>
                           </div>
                         ))}
@@ -765,7 +1148,17 @@ function UsersPanel() {
                       </Button>
                     ) : (
                       <Button variant="ghost" size="sm" onClick={() => toggle(u)}>
-                        {u.access_level === "full" ? <><ShieldOff className="h-4 w-4 mr-1" />Downgrade</> : <><ShieldCheck className="h-4 w-4 mr-1" />Upgrade</>}
+                        {u.access_level === "full" ? (
+                          <>
+                            <ShieldOff className="h-4 w-4 mr-1" />
+                            Downgrade
+                          </>
+                        ) : (
+                          <>
+                            <ShieldCheck className="h-4 w-4 mr-1" />
+                            Upgrade
+                          </>
+                        )}
                       </Button>
                     )}
                   </td>
@@ -784,15 +1177,21 @@ function TicketsPanel() {
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
 
   const load = async () => {
-    const { data } = await supabase.from("support_tickets").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase
+      .from("support_tickets")
+      .select("*")
+      .order("created_at", { ascending: false });
     setTickets(data || []);
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const sendReply = async (t: any) => {
     const reply = (replyDraft[t.id] || "").trim();
     if (!reply) return toast.error("Write a reply first");
-    const { error } = await supabase.from("support_tickets")
+    const { error } = await supabase
+      .from("support_tickets")
       .update({ admin_reply: reply, replied_at: new Date().toISOString(), status: "closed" })
       .eq("id", t.id);
     if (error) return toast.error(error.message);
@@ -810,16 +1209,23 @@ function TicketsPanel() {
   return (
     <div className="space-y-3 mt-4">
       {tickets.length === 0 && <p className="text-muted-foreground text-sm">No messages.</p>}
-      {tickets.map(t => (
+      {tickets.map((t) => (
         <Card key={t.id} className="p-4 bg-card text-card-foreground">
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1">
-              <div className="flex items-center gap-2 text-sm"><strong>{t.subject}</strong><Badge variant="outline">{t.status}</Badge></div>
-              <p className="text-xs text-muted-foreground mt-1">From: {t.user_email} · {new Date(t.created_at).toLocaleString()}</p>
+              <div className="flex items-center gap-2 text-sm">
+                <strong>{t.subject}</strong>
+                <Badge variant="outline">{t.status}</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                From: {t.user_email} · {new Date(t.created_at).toLocaleString()}
+              </p>
               <p className="text-sm mt-2 whitespace-pre-wrap">{t.message}</p>
               {t.admin_reply && (
                 <div className="mt-3 rounded-md border border-secondary/40 bg-secondary/5 p-3">
-                  <p className="text-xs text-secondary font-semibold mb-1">Your reply · {t.replied_at ? new Date(t.replied_at).toLocaleString() : ""}</p>
+                  <p className="text-xs text-secondary font-semibold mb-1">
+                    Your reply · {t.replied_at ? new Date(t.replied_at).toLocaleString() : ""}
+                  </p>
                   <p className="text-sm whitespace-pre-wrap">{t.admin_reply}</p>
                 </div>
               )}
@@ -835,7 +1241,9 @@ function TicketsPanel() {
                 </Button>
               </div>
             </div>
-            <Button size="sm" variant="ghost" onClick={() => del(t.id)}><Trash2 className="h-4 w-4" /></Button>
+            <Button size="sm" variant="ghost" onClick={() => del(t.id)}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
         </Card>
       ))}
@@ -843,22 +1251,38 @@ function TicketsPanel() {
   );
 }
 
-
 function PaymentsPanel() {
   const [reqs, setReqs] = useState<any[]>([]);
-  const [email, setEmail] = useState(""); const [email2, setEmail2] = useState("");
-  const [amount, setAmount] = useState(5); const [agent, setAgent] = useState("");
+  const [email, setEmail] = useState("");
+  const [email2, setEmail2] = useState("");
+  const [amount, setAmount] = useState(5);
+  const [agent, setAgent] = useState("");
 
   const load = async () => {
-    const { data } = await supabase.from("payment_requests").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase
+      .from("payment_requests")
+      .select("*")
+      .order("created_at", { ascending: false });
     setReqs(data || []);
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const add = async () => {
     if (!email) return toast.error("Email required");
-    await supabase.from("payment_requests").insert({ student_email: email, student_email_2: email2 || null, amount, agent_name: agent || null });
-    setEmail(""); setEmail2(""); setAgent(""); load();
+    await supabase
+      .from("payment_requests")
+      .insert({
+        student_email: email,
+        student_email_2: email2 || null,
+        amount,
+        agent_name: agent || null,
+      });
+    setEmail("");
+    setEmail2("");
+    setAgent("");
+    load();
   };
 
   return (
@@ -866,24 +1290,53 @@ function PaymentsPanel() {
       <Card className="p-6 bg-card text-card-foreground">
         <h3 className="font-semibold mb-3">Log payment notification</h3>
         <div className="grid md:grid-cols-4 gap-3">
-          <Input placeholder="Student email" value={email} onChange={e => setEmail(e.target.value)} />
-          <Input placeholder="Second email (if pair)" value={email2} onChange={e => setEmail2(e.target.value)} />
-          <Input type="number" placeholder="Amount" value={amount} onChange={e => setAmount(+e.target.value)} />
-          <Input placeholder="Agent" value={agent} onChange={e => setAgent(e.target.value)} />
+          <Input
+            placeholder="Student email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            placeholder="Second email (if pair)"
+            value={email2}
+            onChange={(e) => setEmail2(e.target.value)}
+          />
+          <Input
+            type="number"
+            placeholder="Amount"
+            value={amount}
+            onChange={(e) => setAmount(+e.target.value)}
+          />
+          <Input placeholder="Agent" value={agent} onChange={(e) => setAgent(e.target.value)} />
         </div>
-        <Button onClick={add} className="mt-3 bg-brand-gradient">Log</Button>
+        <Button onClick={add} className="mt-3 bg-brand-gradient">
+          Log
+        </Button>
       </Card>
       <Card className="p-0 bg-card text-card-foreground overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-muted/40"><tr><th className="text-left p-3">Email(s)</th><th className="text-left p-3">Amount</th><th className="text-left p-3">Agent</th><th className="text-left p-3">Status</th></tr></thead>
-          <tbody>{reqs.map(r => (
-            <tr key={r.id} className="border-t border-border/40">
-              <td className="p-3">{r.student_email}{r.student_email_2 ? `, ${r.student_email_2}` : ""}</td>
-              <td className="p-3">${r.amount}</td>
-              <td className="p-3">{r.agent_name || "_"}</td>
-              <td className="p-3"><Badge variant="outline">{r.status}</Badge></td>
+          <thead className="bg-muted/40">
+            <tr>
+              <th className="text-left p-3">Email(s)</th>
+              <th className="text-left p-3">Amount</th>
+              <th className="text-left p-3">Agent</th>
+              <th className="text-left p-3">Status</th>
             </tr>
-          ))}</tbody>
+          </thead>
+          <tbody>
+            {reqs.map((r) => (
+              <tr key={r.id} className="border-t border-border/40">
+                <td className="p-3">
+                  {r.student_email}
+                  {r.student_email_2 ? `, ${r.student_email_2}` : ""}
+                </td>
+                <td className="p-3">${r.amount}</td>
+                <td className="p-3">{r.agent_name || "_"}</td>
+                <td className="p-3">
+                  <Badge variant="outline">{r.status}</Badge>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </Card>
     </div>
@@ -892,7 +1345,8 @@ function PaymentsPanel() {
 
 function AgentsPanel() {
   const [agents, setAgents] = useState<any[]>([]);
-  const [name, setName] = useState(""); const [contact, setContact] = useState("");
+  const [name, setName] = useState("");
+  const [contact, setContact] = useState("");
   const [editing, setEditing] = useState<any | null>(null);
   const fetchAgents = useServerFn(listAgents);
   const createAgent = useServerFn(addAgent);
@@ -906,12 +1360,17 @@ function AgentsPanel() {
       toast.error(e?.message || "Could not load agents");
     }
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
   const add = async () => {
     if (!name.trim()) return toast.error("Agent name required");
     try {
       await createAgent({ data: { name: name.trim(), contact: contact.trim() } });
-      setName(""); setContact(""); toast.success("Agent added"); load();
+      setName("");
+      setContact("");
+      toast.success("Agent added");
+      load();
     } catch (e: any) {
       toast.error(e?.message || "Could not add agent");
     }
@@ -919,8 +1378,16 @@ function AgentsPanel() {
   const saveEdit = async () => {
     if (!editing?.name?.trim()) return toast.error("Agent name required");
     try {
-      await saveAgentRow({ data: { id: editing.id, name: editing.name.trim(), contact: (editing.contact || "").trim() } });
-      setEditing(null); toast.success("Agent updated"); load();
+      await saveAgentRow({
+        data: {
+          id: editing.id,
+          name: editing.name.trim(),
+          contact: (editing.contact || "").trim(),
+        },
+      });
+      setEditing(null);
+      toast.success("Agent updated");
+      load();
     } catch (e: any) {
       toast.error(e?.message || "Could not update agent");
     }
@@ -929,7 +1396,8 @@ function AgentsPanel() {
     if (!confirm("Delete this agent?")) return;
     try {
       await removeAgent({ data: { id } });
-      toast.success("Agent deleted"); load();
+      toast.success("Agent deleted");
+      load();
     } catch (e: any) {
       toast.error(e?.message || "Could not delete agent");
     }
@@ -938,39 +1406,77 @@ function AgentsPanel() {
     <div className="space-y-4 mt-4">
       <Card className="p-6 bg-card text-card-foreground">
         <h3 className="font-semibold mb-1">Verified agents</h3>
-        <p className="text-xs text-muted-foreground mb-4">Manage payment agents shown to students.</p>
+        <p className="text-xs text-muted-foreground mb-4">
+          Manage payment agents shown to students.
+        </p>
         <div className="grid md:grid-cols-3 gap-3">
-          <Input placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
-          <Input placeholder="Contact" value={contact} onChange={e => setContact(e.target.value)} />
-          <Button onClick={add} className="bg-brand-gradient">Add agent</Button>
+          <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+          <Input
+            placeholder="Contact"
+            value={contact}
+            onChange={(e) => setContact(e.target.value)}
+          />
+          <Button onClick={add} className="bg-brand-gradient">
+            Add agent
+          </Button>
         </div>
       </Card>
       <Card className="p-0 bg-card text-card-foreground overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-muted/40"><tr><th className="text-left p-3">Name</th><th className="text-left p-3">Contact</th><th></th></tr></thead>
-          <tbody>{agents.map(a => (
-            <tr key={a.id} className="border-t border-border/40">
-              <td className="p-3">
-                {editing?.id === a.id ? <Input value={editing.name} onChange={e => setEditing({ ...editing, name: e.target.value })} /> : a.name}
-              </td>
-              <td className="p-3">
-                {editing?.id === a.id ? <Input value={editing.contact || ""} onChange={e => setEditing({ ...editing, contact: e.target.value })} /> : (a.contact || "_")}
-              </td>
-              <td className="p-3">
-                <div className="flex gap-1 justify-end">
-                  {editing?.id === a.id ? (
-                    <>
-                      <Button variant="ghost" size="sm" onClick={saveEdit}><Save className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="sm" onClick={() => setEditing(null)}><X className="h-4 w-4" /></Button>
-                    </>
-                  ) : (
-                    <Button variant="ghost" size="sm" onClick={() => setEditing(a)}><Edit3 className="h-4 w-4" /></Button>
-                  )}
-                  <Button variant="ghost" size="sm" onClick={() => del(a.id)}><Trash2 className="h-4 w-4" /></Button>
-                </div>
-              </td>
+          <thead className="bg-muted/40">
+            <tr>
+              <th className="text-left p-3">Name</th>
+              <th className="text-left p-3">Contact</th>
+              <th></th>
             </tr>
-          ))}</tbody>
+          </thead>
+          <tbody>
+            {agents.map((a) => (
+              <tr key={a.id} className="border-t border-border/40">
+                <td className="p-3">
+                  {editing?.id === a.id ? (
+                    <Input
+                      value={editing.name}
+                      onChange={(e) => setEditing({ ...editing, name: e.target.value })}
+                    />
+                  ) : (
+                    a.name
+                  )}
+                </td>
+                <td className="p-3">
+                  {editing?.id === a.id ? (
+                    <Input
+                      value={editing.contact || ""}
+                      onChange={(e) => setEditing({ ...editing, contact: e.target.value })}
+                    />
+                  ) : (
+                    a.contact || "_"
+                  )}
+                </td>
+                <td className="p-3">
+                  <div className="flex gap-1 justify-end">
+                    {editing?.id === a.id ? (
+                      <>
+                        <Button variant="ghost" size="sm" onClick={saveEdit}>
+                          <Save className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </>
+                    ) : (
+                      <Button variant="ghost" size="sm" onClick={() => setEditing(a)}>
+                        <Edit3 className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <Button variant="ghost" size="sm" onClick={() => del(a.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </Card>
     </div>
@@ -989,18 +1495,26 @@ function SettingsPanel() {
     try {
       const result = await fetchSettings();
       const data = result.settings;
-      if (data) { setAgent(data.primary_agent_name || DEFAULT_VERIFIED_AGENT); setSolo(Number(data.solo_amount)); setPair(Number(data.pair_amount)); }
+      if (data) {
+        setAgent(data.primary_agent_name || DEFAULT_VERIFIED_AGENT);
+        setSolo(Number(data.solo_amount));
+        setPair(Number(data.pair_amount));
+      }
     } catch (e: any) {
       toast.error(e?.message || "Could not load settings");
     }
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const save = async () => {
     if (!agent.trim()) return toast.error("Agent name required");
     setBusy(true);
     try {
-      await persistSettings({ data: { primary_agent_name: agent.trim(), solo_amount: solo, pair_amount: pair } });
+      await persistSettings({
+        data: { primary_agent_name: agent.trim(), solo_amount: solo, pair_amount: pair },
+      });
       toast.success("Settings updated — visible everywhere");
     } catch (e: any) {
       toast.error(e?.message || "Could not save settings");
@@ -1013,25 +1527,47 @@ function SettingsPanel() {
     <div className="space-y-4 mt-4">
       <Card className="p-6 bg-card text-card-foreground">
         <h3 className="font-semibold mb-1">Public app settings</h3>
-        <p className="text-xs text-muted-foreground mb-4">Shown on home page, request-access page and user dashboard.</p>
+        <p className="text-xs text-muted-foreground mb-4">
+          Shown on home page, request-access page and user dashboard.
+        </p>
         <div className="grid md:grid-cols-3 gap-3">
           <div className="md:col-span-3">
             <Label>Verified ZIM Agent</Label>
-            <Input value={agent} onChange={e => setAgent(e.target.value)} maxLength={255} placeholder="e.g. John Doe (+263 77 123 4567)" />
+            <Input
+              value={agent}
+              onChange={(e) => setAgent(e.target.value)}
+              maxLength={255}
+              placeholder="e.g. John Doe (+263 77 123 4567)"
+            />
             <p className="mt-2 inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1 text-xs font-semibold text-secondary">
-              <UserCheck className="h-3 w-3" /> Verified ZIM Agent: {agent || DEFAULT_VERIFIED_AGENT}
+              <UserCheck className="h-3 w-3" /> Verified ZIM Agent:{" "}
+              {agent || DEFAULT_VERIFIED_AGENT}
             </p>
           </div>
           <div>
             <Label>Solo amount ($)</Label>
-            <Input type="number" min={0} step="0.01" value={solo} onChange={e => setSolo(+e.target.value)} />
+            <Input
+              type="number"
+              min={0}
+              step="0.01"
+              value={solo}
+              onChange={(e) => setSolo(+e.target.value)}
+            />
           </div>
           <div>
             <Label>Pair amount ($)</Label>
-            <Input type="number" min={0} step="0.01" value={pair} onChange={e => setPair(+e.target.value)} />
+            <Input
+              type="number"
+              min={0}
+              step="0.01"
+              value={pair}
+              onChange={(e) => setPair(+e.target.value)}
+            />
           </div>
         </div>
-        <Button onClick={save} disabled={busy} className="mt-4 bg-brand-gradient"><Save className="h-4 w-4 mr-1" /> {busy ? "Saving…" : "Save settings"}</Button>
+        <Button onClick={save} disabled={busy} className="mt-4 bg-brand-gradient">
+          <Save className="h-4 w-4 mr-1" /> {busy ? "Saving…" : "Save settings"}
+        </Button>
       </Card>
     </div>
   );
@@ -1060,7 +1596,11 @@ function AddUserForm({ onCreated }: { onCreated: () => void }) {
         is_admin: isAdmin,
       });
       toast.success(`User created${isAdmin ? " (admin)" : ""}`);
-      setEmail(""); setPassword(""); setFullName(""); setAccessLevel("full"); setIsAdmin(false);
+      setEmail("");
+      setPassword("");
+      setFullName("");
+      setAccessLevel("full");
+      setIsAdmin(false);
       onCreated();
     } catch (e: any) {
       toast.error(e?.message || "Could not create user");
@@ -1085,27 +1625,47 @@ function AddUserForm({ onCreated }: { onCreated: () => void }) {
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
           <label className="text-xs text-muted-foreground">Email</label>
-          <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="student@example.com" />
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="student@example.com"
+          />
         </div>
         <div>
           <label className="text-xs text-muted-foreground">Full name (optional)</label>
-          <Input value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Jane Doe" />
+          <Input
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Jane Doe"
+          />
         </div>
         <div className="sm:col-span-2">
           <label className="text-xs text-muted-foreground">Password</label>
           <div className="flex gap-2">
-            <Input type="text" value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" />
-            <Button type="button" variant="outline" onClick={randomPassword}>Generate</Button>
+            <Input
+              type="text"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="At least 6 characters"
+            />
+            <Button type="button" variant="outline" onClick={randomPassword}>
+              Generate
+            </Button>
           </div>
         </div>
       </div>
       <div className="flex items-center gap-4 flex-wrap">
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={accessLevel === "full"} onChange={e => setAccessLevel(e.target.checked ? "full" : "free")} />
+          <input
+            type="checkbox"
+            checked={accessLevel === "full"}
+            onChange={(e) => setAccessLevel(e.target.checked ? "full" : "free")}
+          />
           Approve with full access
         </label>
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={isAdmin} onChange={e => setIsAdmin(e.target.checked)} />
+          <input type="checkbox" checked={isAdmin} onChange={(e) => setIsAdmin(e.target.checked)} />
           Grant admin role
         </label>
         <Button onClick={submit} disabled={busy} className="ml-auto bg-brand-gradient">
@@ -1113,8 +1673,8 @@ function AddUserForm({ onCreated }: { onCreated: () => void }) {
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">
-        The user can immediately sign in with the email and password you set here. Use "Approve with full access" to skip
-        the access-code step.
+        The user can immediately sign in with the email and password you set here. Use "Approve with
+        full access" to skip the access-code step.
       </p>
     </Card>
   );

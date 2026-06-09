@@ -20,9 +20,7 @@ async function requireAdminClient(userId: string) {
 export const listAccessRequests = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
-    z
-      .object({ filter: z.enum(["pending", "all"]).default("all") })
-      .parse(input ?? {}),
+    z.object({ filter: z.enum(["pending", "all"]).default("all") }).parse(input ?? {}),
   )
   .handler(async ({ data, context }) => {
     const supabaseAdmin = await requireAdminClient(context.userId);
@@ -53,7 +51,11 @@ export const getAppSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const supabaseAdmin = await requireAdminClient(context.userId);
-    const { data, error } = await supabaseAdmin.from("app_settings").select("*").eq("id", true).maybeSingle();
+    const { data, error } = await supabaseAdmin
+      .from("app_settings")
+      .select("*")
+      .eq("id", true)
+      .maybeSingle();
     if (error) throw new Error(error.message);
     return {
       settings: data ?? {
@@ -101,27 +103,50 @@ export const listAgents = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const supabaseAdmin = await requireAdminClient(context.userId);
-    const { data, error } = await supabaseAdmin.from("agents").select("*").order("created_at", { ascending: false });
+    const { data, error } = await supabaseAdmin
+      .from("agents")
+      .select("*")
+      .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return { agents: data ?? [] };
   });
 
 export const addAgent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ name: z.string().trim().min(2).max(160), contact: z.string().trim().max(80).optional() }).parse(input))
+  .inputValidator((input) =>
+    z
+      .object({
+        name: z.string().trim().min(2).max(160),
+        contact: z.string().trim().max(80).optional(),
+      })
+      .parse(input),
+  )
   .handler(async ({ data, context }) => {
     const supabaseAdmin = await requireAdminClient(context.userId);
-    const { error } = await supabaseAdmin.from("agents").insert({ name: data.name, contact: data.contact || null });
+    const { error } = await supabaseAdmin
+      .from("agents")
+      .insert({ name: data.name, contact: data.contact || null });
     if (error) throw new Error(error.message);
     return { ok: true };
   });
 
 export const updateAgent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ id: z.string().uuid(), name: z.string().trim().min(2).max(160), contact: z.string().trim().max(80).optional() }).parse(input))
+  .inputValidator((input) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        name: z.string().trim().min(2).max(160),
+        contact: z.string().trim().max(80).optional(),
+      })
+      .parse(input),
+  )
   .handler(async ({ data, context }) => {
     const supabaseAdmin = await requireAdminClient(context.userId);
-    const { error } = await supabaseAdmin.from("agents").update({ name: data.name, contact: data.contact || null }).eq("id", data.id);
+    const { error } = await supabaseAdmin
+      .from("agents")
+      .update({ name: data.name, contact: data.contact || null })
+      .eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
