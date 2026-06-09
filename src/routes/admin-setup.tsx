@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,9 +9,7 @@ import { toast } from "sonner";
 import { Shield, Lock } from "lucide-react";
 import logo from "@/assets/logo.png";
 
-export const Route = createFileRoute("/admin-setup")({ component: AdminSetup });
-
-function AdminSetup() {
+export default function AdminSetup() {
   const nav = useNavigate();
   const [exists, setExists] = useState<boolean | null>(null);
   const [email, setEmail] = useState("");
@@ -65,7 +63,7 @@ function AdminSetup() {
         toast.success(
           exists ? "Admin credentials reset _ you are now the admin" : "Admin account created",
         );
-        nav({ to: "/admin" });
+        nav("/admin");
       }
     } else {
       setBusy(false);
@@ -89,7 +87,7 @@ function AdminSetup() {
     if (ok) {
       localStorage.removeItem("pe1_admin_setup_pending");
       toast.success("Welcome, Administrator");
-      nav({ to: "/admin" });
+      nav("/admin");
     }
   };
 

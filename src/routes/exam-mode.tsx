@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useMemo } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { useAuth } from "@/hooks/use-auth";
@@ -8,9 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, BookOpen, Zap, Volume2, Eye, EyeOff, Flag, CheckCircle2, RotateCcw } from "lucide-react";
 import { useBookmarks, useMastery } from "@/hooks/use-study-state";
-const ALL_EXAM_CARDS: ExamCard[] = [];
-
-export const Route = createFileRoute("/exam-mode")({ component: ExamMode });
 
 interface ExamCard {
   id: string;
@@ -20,7 +17,9 @@ interface ExamCard {
   topic?: string;
 }
 
-function ExamMode() {
+const ALL_EXAM_CARDS: ExamCard[] = [];
+
+export default function ExamMode() {
   const { user, loading } = useAuth();
   const nav = useNavigate();
   const [cards, setCards] = useState<ExamCard[]>([]);
@@ -32,7 +31,7 @@ function ExamMode() {
   const { bookmarks, toggle: toggleBookmark } = useBookmarks();
   const { mastery, setLevel } = useMastery();
 
-  useEffect(() => { if (!loading && !user) nav({ to: "/sign-in" }); }, [user, loading, nav]);
+  useEffect(() => { if (!loading && !user) nav("/sign-in"); }, [user, loading, nav]);
 
   useEffect(() => {
     if (!user) return;

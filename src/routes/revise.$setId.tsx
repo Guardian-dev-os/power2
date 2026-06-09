@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { useAuth } from "@/hooks/use-auth";
@@ -11,10 +11,8 @@ import { useScreenshotProtection } from "@/hooks/use-screenshot-protection";
 import { RichContent } from "@/components/RichContent";
 import { useBookmarks, useMastery, summariseMastery } from "@/hooks/use-study-state";
 
-export const Route = createFileRoute("/revise/$setId")({ component: Revise });
-
-function Revise() {
-  const { setId } = Route.useParams();
+export default function ReviseSet() {
+  const { setId } = useParams<{ setId: string }>();
   const { user, profile, loading } = useAuth();
   const nav = useNavigate();
   const { hidden } = useScreenshotProtection();
@@ -25,7 +23,7 @@ function Revise() {
   const { mastery, setLevel } = useMastery();
   const { has: isBookmarked, toggle: toggleBookmark } = useBookmarks();
 
-  useEffect(() => { if (!loading && !user) nav({ to: "/sign-in" }); }, [user, loading, nav]);
+  useEffect(() => { if (!loading && !user) nav("/sign-in"); }, [user, loading, nav]);
 
   useEffect(() => {
     (async () => {

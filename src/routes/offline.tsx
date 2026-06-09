@@ -1,12 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { Wifi, AlertTriangle, Home, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import logo from "@/assets/logo.png";
 
-export const Route = createFileRoute("/offline")({ component: OfflinePage });
-
-function OfflinePage() {
+export default function Offline() {
   return (
     <div className="min-h-screen bg-hero flex flex-col items-center justify-center p-4">
       <Card className="w-full max-w-md p-8 bg-card text-card-foreground shadow-card-elev text-center">

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
@@ -20,7 +20,7 @@ export function AppHeader({ showBack = false, backTo = "/" }: { showBack?: boole
     if (clickCount.current >= 7) {
       e.preventDefault();
       clickCount.current = 0;
-      nav({ to: "/admin-setup" });
+      nav("/admin-setup");
     }
   };
 
@@ -29,7 +29,7 @@ export function AppHeader({ showBack = false, backTo = "/" }: { showBack?: boole
       <div className="container mx-auto flex items-center justify-between px-4 py-3 gap-2">
         <div className="flex items-center gap-2">
           {showBack && (
-            <Button variant="ghost" size="sm" onClick={() => nav({ to: backTo as any })} className="text-white hover:text-white">
+            <Button variant="ghost" size="sm" onClick={() => nav(backTo)} className="text-white hover:text-white">
               <ArrowLeft className="h-4 w-4 mr-1" /> Back
             </Button>
           )}

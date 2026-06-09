@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { useAuth } from "@/hooks/use-auth";
@@ -10,11 +10,15 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Search as SearchIcon, Star } from "lucide-react";
 import { useBookmarks } from "@/hooks/use-study-state";
 
-export const Route = createFileRoute("/search")({ component: SearchPage });
+interface CardRow {
+  id: string;
+  question: string;
+  answer: string;
+  topic_set_id: string;
+  order_index: number;
+}
 
-type CardRow = { id: string; question: string; answer: string; topic_set_id: string; order_index: number };
-
-function SearchPage() {
+export default function Search() {
   const { user, loading } = useAuth();
   const nav = useNavigate();
   const [q, setQ] = useState("");
@@ -22,7 +26,7 @@ function SearchPage() {
   const [sets, setSets] = useState<Record<string, { title: string }>>({});
   const { has, toggle } = useBookmarks();
 
-  useEffect(() => { if (!loading && !user) nav({ to: "/sign-in" }); }, [user, loading, nav]);
+  useEffect(() => { if (!loading && !user) nav("/sign-in"); }, [user, loading, nav]);
 
   useEffect(() => {
     supabase.from("cards").select("id, question, answer, topic_set_id, order_index").then(({ data }) => setCards(data || []));

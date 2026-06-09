@@ -1,6 +1,6 @@
-import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { Navigate } from 'react-router-dom'
 
 // Legacy redirect — auth page renamed to /sign-in
-export const Route = createFileRoute("/auth")({
-  component: () => <Navigate to="/sign-in" />,
-});
+export default function AuthPage() {
+  return <Navigate to="/sign-in" replace />
+}

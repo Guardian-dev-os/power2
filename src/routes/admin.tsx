@@ -1,5 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { useAuth } from "@/hooks/use-auth";
@@ -44,23 +43,21 @@ import {
 } from "@/lib/admin.functions";
 import { UserManualPanel } from "@/components/admin/DeploymentManualPanels";
 
-export const Route = createFileRoute("/admin")({ component: Admin });
-
-function randCode() {
+const generateAccessCode = () => {
   const seg = () => Math.random().toString(36).slice(2, 6).toUpperCase();
   return `AUT-${seg()}-${seg()}`;
-}
+};
 
 const DEFAULT_VERIFIED_AGENT = "Tinashe Lee Vurayai (+263 71 3043 376)";
 
-function Admin() {
+export default function AdminDashboard() {
   const { user, isAdmin, loading } = useAuth();
   const nav = useNavigate();
 
   useEffect(() => {
     if (!loading) {
-      if (!user) nav({ to: "/admin-setup" });
-      else if (!isAdmin) nav({ to: "/dashboard" });
+      if (!user) nav("/admin-setup");
+      else if (!isAdmin) nav("/dashboard");
     }
   }, [user, isAdmin, loading, nav]);
 
@@ -120,13 +117,11 @@ function RequestsPanel() {
   const [rows, setRows] = useState<any[]>([]);
   const [filter, setFilter] = useState<"pending" | "all">("all");
   const [loadingRows, setLoadingRows] = useState(false);
-  const fetchRequests = useServerFn(listAccessRequests);
-  const removeRequest = useServerFn(deleteAccessRequest);
 
   const load = async () => {
     setLoadingRows(true);
     try {
-      const result = await fetchRequests({ data: { filter } });
+      const result = await listAccessRequests({ filter } as any);
       setRows(result.rows || []);
     } catch (e: any) {
       toast.error(e?.message || "Could not load access requests");

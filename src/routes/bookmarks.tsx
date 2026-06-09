@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { useAuth } from "@/hooks/use-auth";
@@ -11,9 +11,7 @@ import { useBookmarks } from "@/hooks/use-study-state";
 import { RichContent } from "@/components/RichContent";
 import { useScreenshotProtection } from "@/hooks/use-screenshot-protection";
 
-export const Route = createFileRoute("/bookmarks")({ component: BookmarksPage });
-
-function BookmarksPage() {
+export default function Bookmarks() {
   const { user, profile, loading } = useAuth();
   const nav = useNavigate();
   const { hidden } = useScreenshotProtection();
@@ -23,7 +21,7 @@ function BookmarksPage() {
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
-  useEffect(() => { if (!loading && !user) nav({ to: "/sign-in" }); }, [user, loading, nav]);
+  useEffect(() => { if (!loading && !user) nav("/sign-in"); }, [user, loading, nav]);
 
   useEffect(() => {
     if (bookmarks.length === 0) { setCards([]); return; }

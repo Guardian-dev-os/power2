@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { useAuth } from "@/hooks/use-auth";
@@ -20,12 +20,10 @@ import {
 } from "lucide-react";
 import { useBookmarks, useMastery, summariseMastery } from "@/hooks/use-study-state";
 
-export const Route = createFileRoute("/dashboard")({ component: Dashboard });
-
 const DEFAULT_AGENT_PLACEHOLDER = "Contact admin for agent details";
 const DEFAULT_VERIFIED_AGENT = "Tinashe Lee Vurayai (+263 71 3043 376)";
 
-function Dashboard() {
+export default function Dashboard() {
   const { user, profile, loading } = useAuth();
   const nav = useNavigate();
   const [sets, setSets] = useState<any[]>([]);
@@ -36,7 +34,7 @@ function Dashboard() {
   const { bookmarks } = useBookmarks();
 
   useEffect(() => {
-    if (!loading && !user) nav({ to: "/sign-in" });
+    if (!loading && !user) nav("/sign-in");
   }, [user, loading, nav]);
 
   useEffect(() => {

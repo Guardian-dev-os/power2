@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,11 +12,9 @@ import { accessApi } from "@/lib/access-api";
 import { ArrowLeft, KeyRound, UserPlus } from "lucide-react";
 import logo from "@/assets/logo.png";
 
-export const Route = createFileRoute("/sign-in")({ component: SignInPage });
-
 const REMEMBER_KEY = "ia_remember_v1";
 
-function SignInPage() {
+export default function SignInPage() {
   const { user, loading } = useAuth();
   const nav = useNavigate();
 
@@ -26,7 +24,7 @@ function SignInPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) nav({ to: "/dashboard" });
+    if (!loading && user) nav("/dashboard");
   }, [user, loading, nav]);
 
   useEffect(() => {
@@ -56,7 +54,7 @@ function SignInPage() {
         localStorage.removeItem(REMEMBER_KEY);
       }
       toast.success("Welcome back");
-      nav({ to: "/dashboard" });
+      nav("/dashboard");
     } catch (e: any) {
       toast.error(e?.message || "Invalid name or access code");
     } finally {
@@ -111,5 +109,5 @@ function SignInPage() {
         </div>
       </Card>
     </div>
-  );
+  )
 }
