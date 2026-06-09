@@ -12,6 +12,7 @@ import { useBookmarks, useMastery, summariseMastery } from "@/hooks/use-study-st
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
 const DEFAULT_AGENT_PLACEHOLDER = "Contact admin for agent details";
+const DEFAULT_VERIFIED_AGENT = "Tinashe Lee Vurayai (+263 71 3043 376)";
 
 function Dashboard() {
   const { user, profile, loading } = useAuth();
@@ -19,7 +20,7 @@ function Dashboard() {
   const [sets, setSets] = useState<any[]>([]);
   const [setCardIds, setSetCardIds] = useState<Record<string, string[]>>({});
   const [fetching, setFetching] = useState(true);
-  const [agentName, setAgentName] = useState<string | null>(null);
+  const [agentName, setAgentName] = useState<string | null>(DEFAULT_VERIFIED_AGENT);
   const { mastery } = useMastery();
   const { bookmarks } = useBookmarks();
 
@@ -90,7 +91,10 @@ function Dashboard() {
           {showAgent && (
             <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-secondary/40 bg-secondary/5 px-3 py-1.5 text-sm">
               <UserCheck className="h-4 w-4 text-secondary" />
-              <span>Authorised agent: <strong>{agentName}</strong></span>
+              <span>
+                <span className="mr-2 rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-semibold text-secondary">Verified ZIM Agent</span>
+                <strong>{agentName}</strong>
+              </span>
             </div>
           )}
         </div>

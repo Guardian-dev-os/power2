@@ -32,8 +32,9 @@ function Landing() {
       .then(({ data }) => data && setSettings(data as any));
   }, []);
   const DEFAULT_AGENT_PLACEHOLDER = "Contact admin for agent details";
+  const DEFAULT_VERIFIED_AGENT = "Tinashe Lee Vurayai (+263 71 3043 376)";
   const agentRaw = settings?.primary_agent_name?.trim();
-  const agent = agentRaw && agentRaw !== DEFAULT_AGENT_PLACEHOLDER ? agentRaw : null;
+  const agent = agentRaw && agentRaw !== DEFAULT_AGENT_PLACEHOLDER ? agentRaw : DEFAULT_VERIFIED_AGENT;
   const solo = settings?.solo_amount ?? 5;
   const pair = settings?.pair_amount ?? 8;
   return (
@@ -166,9 +167,10 @@ function Landing() {
             <p className="text-center mt-6 text-sm text-muted-foreground">Pay any authorised agent in cash. No card. No online payment.</p>
             <div className="mt-6 rounded-lg border border-secondary/40 bg-secondary/5 p-4 flex items-center justify-center gap-2 text-sm text-center">
               <UserCheck className="h-4 w-4 text-secondary shrink-0" />
-              {agent
-                ? <span className="text-foreground">Authorised agent: <strong>{agent}</strong></span>
-                : <span className="text-muted-foreground">Admin will name your authorised agent after you submit a request.</span>}
+              <span className="text-foreground">
+                <span className="mr-2 rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-semibold text-secondary">Verified ZIM Agent</span>
+                <strong>{agent}</strong>
+              </span>
             </div>
           </Card>
         </section>

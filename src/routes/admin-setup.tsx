@@ -18,6 +18,10 @@ function AdminSetup() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [mode, setMode] = useState<"create" | "signin">(() => {
+    if (typeof window === "undefined") return "create";
+    return window.location.search.includes("finish=1") || localStorage.getItem("pe1_admin_setup_pending") === "1" ? "signin" : "create";
+  });
 
   useEffect(() => {
     supabase.rpc("admin_exists").then(({ data }) => setExists(!!data));
@@ -35,7 +39,7 @@ function AdminSetup() {
     setBusy(true);
     const { data: sd, error } = await supabase.auth.signUp({
       email, password,
-      options: { emailRedirectTo: `${window.location.origin}/admin`, data: { full_name: name || "Administrator" } },
+      options: { emailRedirectTo: `${window.location.origin}/admin-setup?finish=1`, data: { full_name: name || "Administrator" } },
     });
     if (error) { setBusy(false); return toast.error(error.message); }
     if (sd.session) {
@@ -44,7 +48,9 @@ function AdminSetup() {
       if (ok) { toast.success(exists ? "Admin credentials reset _ you are now the admin" : "Admin account created"); nav({ to: "/admin" }); }
     } else {
       setBusy(false);
-      toast.success("Account created. Confirm your email, sign in, then re-open this page to claim admin.");
+      localStorage.setItem("pe1_admin_setup_pending", "1");
+      setMode("signin");
+      toast.success("Account created. Confirm your email, then sign in here to finish admin setup.");
     }
   };
 
@@ -52,10 +58,13 @@ function AdminSetup() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setBusy(false); return toast.error(error.message); }
-    await claimAfterAuth();
+    const ok = await claimAfterAuth();
     setBusy(false);
-    toast.success("Welcome, Administrator");
-    nav({ to: "/admin" });
+    if (ok) {
+      localStorage.removeItem("pe1_admin_setup_pending");
+      toast.success("Welcome, Administrator");
+      nav({ to: "/admin" });
+    }
   };
 
   return (
@@ -65,17 +74,20 @@ function AdminSetup() {
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2 text-secondary"><Shield className="h-5 w-5" /><span className="font-semibold">Admin Portal</span></div>
           <p className="text-xs text-muted-foreground mt-2">
-            {exists === null ? "Checking..." : exists
+            {mode === "signin" ? (
+              <span className="inline-flex items-center gap-1"><Lock className="h-3 w-3" /> Sign in to finish administrator setup</span>
+            ) : exists === null ? "Checking..." : exists
               ? <span className="inline-flex items-center gap-1"><Lock className="h-3 w-3" /> Sign in with your administrator credentials</span>
-              : "First-time setup _ create the administrator account"}
+              : "First-time setup — create the administrator account"}
           </p>
         </div>
 
-        {exists ? (
+        {exists || mode === "signin" ? (
           <div className="space-y-3 mt-4">
             <div><Label>Email</Label><Input type="email" value={email} onChange={e => setEmail(e.target.value)} /></div>
             <div><Label>Password</Label><Input type="password" value={password} onChange={e => setPassword(e.target.value)} /></div>
             <Button onClick={signIn} disabled={busy} className="w-full bg-brand-gradient">Sign in</Button>
+            {exists === false && <Button type="button" variant="ghost" onClick={() => setMode("create")} className="w-full">Create a different admin account</Button>}
           </div>
         ) : (
           <div className="space-y-3 mt-4">

@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { useAuth } from "@/hooks/use-auth";
@@ -11,8 +12,18 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Plus, Trash2, ShieldOff, ShieldCheck, Copy, Download, Search, Edit3, Save, X, Check, Send, Mail, AlertTriangle, Upload, UserPlus } from "lucide-react";
+import { Plus, Trash2, ShieldOff, ShieldCheck, Copy, Download, Search, Edit3, Save, X, Check, Send, Mail, AlertTriangle, Upload, UserPlus, UserCheck } from "lucide-react";
 import { accessApi } from "@/lib/access-api";
+import {
+  addAgent,
+  deleteAccessRequest,
+  deleteAgent,
+  getAppSettings,
+  listAccessRequests,
+  listAgents,
+  saveAppSettings,
+  updateAgent,
+} from "@/lib/admin.functions";
 import { UserManualPanel } from "@/components/admin/DeploymentManualPanels";
 
 export const Route = createFileRoute("/admin")({ component: Admin });
@@ -21,6 +32,8 @@ function randCode() {
   const seg = () => Math.random().toString(36).slice(2, 6).toUpperCase();
   return `AUT-${seg()}-${seg()}`;
 }
+
+const DEFAULT_VERIFIED_AGENT = "Tinashe Lee Vurayai (+263 71 3043 376)";
 
 function Admin() {
   const { user, isAdmin, loading } = useAuth();
@@ -69,13 +82,22 @@ function Admin() {
 
 function RequestsPanel() {
   const [rows, setRows] = useState<any[]>([]);
-  const [filter, setFilter] = useState<"pending" | "all">("pending");
+  const [filter, setFilter] = useState<"pending" | "all">("all");
+  const [loadingRows, setLoadingRows] = useState(false);
+  const fetchRequests = useServerFn(listAccessRequests);
+  const removeRequest = useServerFn(deleteAccessRequest);
 
   const load = async () => {
-    let q = supabase.from("access_requests").select("*").order("created_at", { ascending: false });
-    if (filter === "pending") q = q.eq("status", "pending");
-    const { data } = await q;
-    setRows(data || []);
+    setLoadingRows(true);
+    try {
+      const result = await fetchRequests({ data: { filter } });
+      setRows(result.rows || []);
+    } catch (e: any) {
+      toast.error(e?.message || "Could not load access requests");
+      setRows([]);
+    } finally {
+      setLoadingRows(false);
+    }
   };
   useEffect(() => { load(); }, [filter]);
 
@@ -94,8 +116,13 @@ function RequestsPanel() {
   };
   const del = async (id: string) => {
     if (!confirm("Delete this request?")) return;
-    await supabase.from("access_requests").delete().eq("id", id);
-    load();
+    try {
+      await removeRequest({ data: { id } });
+      toast.success("Request deleted");
+      load();
+    } catch (e: any) {
+      toast.error(e?.message || "Delete failed");
+    }
   };
   const copy = (code: string) => { navigator.clipboard?.writeText(code); toast.success(`Copied ${code}`); };
 
@@ -110,9 +137,10 @@ function RequestsPanel() {
       <div className="flex gap-2">
         <Button size="sm" variant={filter === "pending" ? "default" : "outline"} onClick={() => setFilter("pending")}>Pending</Button>
         <Button size="sm" variant={filter === "all" ? "default" : "outline"} onClick={() => setFilter("all")}>All</Button>
-        <div className="ml-auto text-sm text-muted-foreground self-center">{rows.length} request(s)</div>
+        <Button size="sm" variant="ghost" onClick={load} disabled={loadingRows}>Refresh</Button>
+        <div className="ml-auto text-sm text-muted-foreground self-center">{loadingRows ? "Loading…" : `${rows.length} request(s)`}</div>
       </div>
-      {rows.length === 0 && <Card className="p-6 bg-card text-card-foreground text-sm text-muted-foreground">No requests.</Card>}
+      {!loadingRows && rows.length === 0 && <Card className="p-6 bg-card text-card-foreground text-sm text-muted-foreground">No requests.</Card>}
       {rows.map(r => (
         <Card key={r.id} className="p-5 bg-card text-card-foreground">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -865,17 +893,52 @@ function PaymentsPanel() {
 function AgentsPanel() {
   const [agents, setAgents] = useState<any[]>([]);
   const [name, setName] = useState(""); const [contact, setContact] = useState("");
-  const load = async () => { const { data } = await supabase.from("agents").select("*").order("created_at", { ascending: false }); setAgents(data || []); };
+  const [editing, setEditing] = useState<any | null>(null);
+  const fetchAgents = useServerFn(listAgents);
+  const createAgent = useServerFn(addAgent);
+  const saveAgentRow = useServerFn(updateAgent);
+  const removeAgent = useServerFn(deleteAgent);
+  const load = async () => {
+    try {
+      const result = await fetchAgents();
+      setAgents(result.agents || []);
+    } catch (e: any) {
+      toast.error(e?.message || "Could not load agents");
+    }
+  };
   useEffect(() => { load(); }, []);
   const add = async () => {
-    if (!name) return;
-    await supabase.from("agents").insert({ name, contact });
-    setName(""); setContact(""); load();
+    if (!name.trim()) return toast.error("Agent name required");
+    try {
+      await createAgent({ data: { name: name.trim(), contact: contact.trim() } });
+      setName(""); setContact(""); toast.success("Agent added"); load();
+    } catch (e: any) {
+      toast.error(e?.message || "Could not add agent");
+    }
   };
-  const del = async (id: string) => { await supabase.from("agents").delete().eq("id", id); load(); };
+  const saveEdit = async () => {
+    if (!editing?.name?.trim()) return toast.error("Agent name required");
+    try {
+      await saveAgentRow({ data: { id: editing.id, name: editing.name.trim(), contact: (editing.contact || "").trim() } });
+      setEditing(null); toast.success("Agent updated"); load();
+    } catch (e: any) {
+      toast.error(e?.message || "Could not update agent");
+    }
+  };
+  const del = async (id: string) => {
+    if (!confirm("Delete this agent?")) return;
+    try {
+      await removeAgent({ data: { id } });
+      toast.success("Agent deleted"); load();
+    } catch (e: any) {
+      toast.error(e?.message || "Could not delete agent");
+    }
+  };
   return (
     <div className="space-y-4 mt-4">
       <Card className="p-6 bg-card text-card-foreground">
+        <h3 className="font-semibold mb-1">Verified agents</h3>
+        <p className="text-xs text-muted-foreground mb-4">Manage payment agents shown to students.</p>
         <div className="grid md:grid-cols-3 gap-3">
           <Input placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
           <Input placeholder="Contact" value={contact} onChange={e => setContact(e.target.value)} />
@@ -887,8 +950,25 @@ function AgentsPanel() {
           <thead className="bg-muted/40"><tr><th className="text-left p-3">Name</th><th className="text-left p-3">Contact</th><th></th></tr></thead>
           <tbody>{agents.map(a => (
             <tr key={a.id} className="border-t border-border/40">
-              <td className="p-3">{a.name}</td><td className="p-3">{a.contact}</td>
-              <td className="p-3"><Button variant="ghost" size="sm" onClick={() => del(a.id)}><Trash2 className="h-4 w-4" /></Button></td>
+              <td className="p-3">
+                {editing?.id === a.id ? <Input value={editing.name} onChange={e => setEditing({ ...editing, name: e.target.value })} /> : a.name}
+              </td>
+              <td className="p-3">
+                {editing?.id === a.id ? <Input value={editing.contact || ""} onChange={e => setEditing({ ...editing, contact: e.target.value })} /> : (a.contact || "_")}
+              </td>
+              <td className="p-3">
+                <div className="flex gap-1 justify-end">
+                  {editing?.id === a.id ? (
+                    <>
+                      <Button variant="ghost" size="sm" onClick={saveEdit}><Save className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => setEditing(null)}><X className="h-4 w-4" /></Button>
+                    </>
+                  ) : (
+                    <Button variant="ghost" size="sm" onClick={() => setEditing(a)}><Edit3 className="h-4 w-4" /></Button>
+                  )}
+                  <Button variant="ghost" size="sm" onClick={() => del(a.id)}><Trash2 className="h-4 w-4" /></Button>
+                </div>
+              </td>
             </tr>
           ))}</tbody>
         </table>
@@ -898,26 +978,35 @@ function AgentsPanel() {
 }
 
 function SettingsPanel() {
-  const [agent, setAgent] = useState("");
+  const [agent, setAgent] = useState(DEFAULT_VERIFIED_AGENT);
   const [solo, setSolo] = useState(5);
   const [pair, setPair] = useState(8);
   const [busy, setBusy] = useState(false);
+  const fetchSettings = useServerFn(getAppSettings);
+  const persistSettings = useServerFn(saveAppSettings);
 
   const load = async () => {
-    const { data } = await supabase.from("app_settings").select("*").eq("id", true).maybeSingle();
-    if (data) { setAgent(data.primary_agent_name); setSolo(Number(data.solo_amount)); setPair(Number(data.pair_amount)); }
+    try {
+      const result = await fetchSettings();
+      const data = result.settings;
+      if (data) { setAgent(data.primary_agent_name || DEFAULT_VERIFIED_AGENT); setSolo(Number(data.solo_amount)); setPair(Number(data.pair_amount)); }
+    } catch (e: any) {
+      toast.error(e?.message || "Could not load settings");
+    }
   };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
     if (!agent.trim()) return toast.error("Agent name required");
     setBusy(true);
-    const { error } = await supabase.from("app_settings").upsert({
-      id: true, primary_agent_name: agent.trim(), solo_amount: solo, pair_amount: pair, updated_at: new Date().toISOString(),
-    });
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Settings updated — visible everywhere");
+    try {
+      await persistSettings({ data: { primary_agent_name: agent.trim(), solo_amount: solo, pair_amount: pair } });
+      toast.success("Settings updated — visible everywhere");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not save settings");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -927,8 +1016,11 @@ function SettingsPanel() {
         <p className="text-xs text-muted-foreground mb-4">Shown on home page, request-access page and user dashboard.</p>
         <div className="grid md:grid-cols-3 gap-3">
           <div className="md:col-span-3">
-            <Label>Authorised agent name</Label>
+            <Label>Verified ZIM Agent</Label>
             <Input value={agent} onChange={e => setAgent(e.target.value)} maxLength={255} placeholder="e.g. John Doe (+263 77 123 4567)" />
+            <p className="mt-2 inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1 text-xs font-semibold text-secondary">
+              <UserCheck className="h-3 w-3" /> Verified ZIM Agent: {agent || DEFAULT_VERIFIED_AGENT}
+            </p>
           </div>
           <div>
             <Label>Solo amount ($)</Label>
