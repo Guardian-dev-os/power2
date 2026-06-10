@@ -1,7 +1,7 @@
 {
-  "name": "Power Electronics 1 Revision",
-  "short_name": "Power Electronics 1",
-  "description": "Interactive Q&A flashcards for National Diploma Power Electronics 1 students.",
+  "name": "Intelligent Devices Revision",
+  "short_name": "Intelligent Devices",
+  "description": "Interactive Q&A flashcards for National Diploma Intelligent Devices students.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

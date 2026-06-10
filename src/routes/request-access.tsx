@@ -55,7 +55,7 @@ export default function RequestAccessPage() {
           <ArrowLeft className="h-4 w-4 mr-1" /> Back
         </Link>
         <Link to="/" className="flex justify-center mb-6">
-          <img src={logo} alt="Power Electronics 1" className="h-16" />
+          <img src={logo} alt="Intelligent Devices" className="h-16" />
         </Link>
 
         {done ? (
