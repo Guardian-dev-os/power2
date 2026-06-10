@@ -153,9 +153,9 @@ export default function Landing() {
                   Intelligent Devices concepts tested year after year.
                 </h2>
                 <p className="text-muted-foreground">
-                  Thyristors, diodes, and rectifiers. Gate triggering and commutation. DC-DC and
-                  AC-DC conversion. Thermal management and snubber design. Protection circuits. The
-                  same exam-tested topics delivered in exam format.
+                  PLCs and scan cycles. AI and fuzzy logic control. SCADA, HMI and industrial
+                  networks. Robotics, sensors and actuators. Regulated power supplies. The same
+                  exam-tested topics delivered in exam format.
                 </p>
                 <p className="mt-4 font-semibold">
                   The students who pass aren't smarter.{" "}
