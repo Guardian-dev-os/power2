@@ -76,12 +76,12 @@ export default function Landing() {
           </div>
           <img
             src={logo}
-            alt="Power Electronics 1 logo"
+            alt="Intelligent Devices logo"
             onClick={handleLogoTap}
             className="mx-auto h-28 w-auto mb-6 drop-shadow-[0_0_60px_rgba(99,102,241,0.55)] cursor-pointer select-none"
           />
           <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tight leading-tight text-white">
-            Master Power Electronics.
+            Master Intelligent Devices.
             <br />
             <span className="text-brand-gradient">Ace your exam with confidence.</span>
           </h1>
@@ -150,12 +150,12 @@ export default function Landing() {
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h2 className="text-3xl font-bold mb-4">
-                  Power Electronics concepts tested year after year.
+                  Intelligent Devices concepts tested year after year.
                 </h2>
                 <p className="text-muted-foreground">
-                  Thyristors, diodes, and rectifiers. Gate triggering and commutation. DC-DC and
-                  AC-DC conversion. Thermal management and snubber design. Protection circuits. The
-                  same exam-tested topics delivered in exam format.
+                  PLCs and scan cycles. AI and fuzzy logic control. SCADA, HMI and industrial
+                  networks. Robotics, sensors and actuators. Regulated power supplies. The same
+                  exam-tested topics delivered in exam format.
                 </p>
                 <p className="mt-4 font-semibold">
                   The students who pass aren't smarter.{" "}
@@ -276,7 +276,7 @@ export default function Landing() {
                 d: "Five full past paper sets, model answers verified.",
               },
               { i: Download, t: "Install on phone", d: "Add to home screen, revise even offline." },
-              { i: Mail, t: "Real human support", d: "powerelectronics1@gmail.com" },
+              { i: Mail, t: "Real human support", d: "intelligentdevices@gmail.com" },
             ].map(({ i: Icon, t, d }) => (
               <Card key={t} className="p-4 bg-card text-card-foreground">
                 <Icon className="h-5 w-5 text-secondary mb-2" />
@@ -354,7 +354,7 @@ export default function Landing() {
         </section>
       </main>
       <footer className="border-t border-border/40 mt-6 py-8 text-center text-sm text-white/60">
-        © Power Electronics 1. Master the circuit. Control the power. Ace the exam.
+        © Intelligent Devices. Master the circuit. Control the power. Ace the exam.
       </footer>
     </div>
   )

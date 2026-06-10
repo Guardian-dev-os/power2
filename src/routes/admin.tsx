@@ -161,7 +161,7 @@ function RequestsPanel() {
   const del = async (id: string) => {
     if (!confirm("Delete this request?")) return;
     try {
-      await removeRequest({ data: { id } });
+      await deleteAccessRequest(id);
       toast.success("Request deleted");
       load();
     } catch (e: any) {
@@ -350,7 +350,7 @@ function CodesPanel() {
       .map((s) => s.trim().toLowerCase())
       .filter(Boolean);
     const rows = Array.from({ length: Math.max(1, bulk) }, () => ({
-      code: randCode(),
+      code: generateAccessCode(),
       total_seats: seats,
       amount,
       agent_name: agent || null,
@@ -1343,10 +1343,10 @@ function AgentsPanel() {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [editing, setEditing] = useState<any | null>(null);
-  const fetchAgents = useServerFn(listAgents);
-  const createAgent = useServerFn(addAgent);
-  const saveAgentRow = useServerFn(updateAgent);
-  const removeAgent = useServerFn(deleteAgent);
+  const fetchAgents = listAgents;
+  const createAgent = (args: any) => addAgent(args.data ?? args);
+  const saveAgentRow = (args: any) => updateAgent(args.data ?? args);
+  const removeAgent = (args: any) => deleteAgent((args.data ?? args).id);
   const load = async () => {
     try {
       const result = await fetchAgents();
@@ -1483,8 +1483,8 @@ function SettingsPanel() {
   const [solo, setSolo] = useState(5);
   const [pair, setPair] = useState(8);
   const [busy, setBusy] = useState(false);
-  const fetchSettings = useServerFn(getAppSettings);
-  const persistSettings = useServerFn(saveAppSettings);
+  const fetchSettings = getAppSettings;
+  const persistSettings = (args: any) => saveAppSettings(args.data ?? args);
 
   const load = async () => {
     try {

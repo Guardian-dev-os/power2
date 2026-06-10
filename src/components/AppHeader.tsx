@@ -34,7 +34,7 @@ export function AppHeader({ showBack = false, backTo = "/" }: { showBack?: boole
             </Button>
           )}
           <Link to="/" onClick={onLogo} className="flex items-center gap-3 select-none">
-            <img src={logo} alt="Power Electronics 1" className="h-10 w-auto" draggable={false} />
+            <img src={logo} alt="Intelligent Devices" className="h-10 w-auto" draggable={false} />
           </Link>
         </div>
         <nav className="flex items-center gap-1 flex-wrap justify-end">
@@ -58,7 +58,7 @@ export function AppHeader({ showBack = false, backTo = "/" }: { showBack?: boole
                   <Link to="/admin"><Shield className="h-4 w-4 mr-1" /> Admin</Link>
                 </Button>
               )}
-              <Button variant="ghost" size="sm" onClick={async () => { await signOut(); nav({ to: "/" }); }} className="text-white hover:text-white hover:bg-white/10">
+              <Button variant="ghost" size="sm" onClick={async () => { await signOut(); nav("/"); }} className="text-white hover:text-white hover:bg-white/10">
                 <LogOut className="h-4 w-4" />
               </Button>
             </>

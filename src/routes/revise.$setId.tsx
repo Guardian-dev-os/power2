@@ -32,12 +32,12 @@ export default function ReviseSet() {
           supabase
             .from("topic_sets")
             .select("*")
-            .eq("id", setId)
+            .eq("id", setId!)
             .maybeSingle(),
           supabase
             .from("cards")
             .select("*")
-            .eq("topic_set_id", setId)
+            .eq("topic_set_id", setId!)
             .order("order_index")
             .limit(1000) // Prevent loading excessive cards
         ]);

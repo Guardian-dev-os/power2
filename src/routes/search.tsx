@@ -76,7 +76,7 @@ export default function Search() {
                       <Star className={`h-4 w-4 ${has(c.id) ? "fill-amber-400 text-amber-400" : ""}`} />
                     </Button>
                     <Button size="sm" asChild>
-                      <Link to="/revise/$setId" params={{ setId: c.topic_set_id }}>Open</Link>
+                      <Link to={`/revise/${c.topic_set_id}`}>Open</Link>
                     </Button>
                   </div>
                 </div>

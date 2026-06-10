@@ -99,7 +99,7 @@ export function UserManualPanel() {
         <AccordionItem value="overview">
           <AccordionTrigger>1. System overview</AccordionTrigger>
           <AccordionContent className="space-y-2 text-sm">
-            <p>This is a flashcard revision platform for Power Electronics 1. Users browse topic sets, revise cards, mark mastery, and bookmark content for exam preparation.</p>
+            <p>This is a flashcard revision platform for Intelligent Devices. Users browse topic sets, revise cards, mark mastery, and bookmark content for exam preparation.</p>
             <p>Access is tiered: <strong>Free</strong> (first few cards per topic) and <strong>Full</strong> (all cards, unlocked by access code).</p>
             <p>Only authenticated users can read cards (enforced by RLS). Content includes 250+ professionally formatted cards from 5 past exam papers.</p>
           </AccordionContent>
