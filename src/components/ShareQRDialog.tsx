@@ -27,7 +27,7 @@ export function ShareQRDialog({ trigger, className }: Props) {
     if (!navigator.share) return copy();
     try {
       await navigator.share({
-        title: "Power Electronics 1 – Exam revision platform",
+        title: "Intelligent Devices – Learn and Master IoT & Electronics",
         text: "Master power electronics 1. Ace your exam with confidence.",
         url,
       });

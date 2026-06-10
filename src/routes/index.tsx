@@ -76,20 +76,19 @@ export default function Landing() {
           </div>
           <img
             src={logo}
-            alt="Power Electronics 1 logo"
+            alt="Intelligent Devices logo"
             onClick={handleLogoTap}
             className="mx-auto h-28 w-auto mb-6 drop-shadow-[0_0_60px_rgba(99,102,241,0.55)] cursor-pointer select-none"
           />
           <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tight leading-tight text-white">
-            Master Power Electronics.
+            Master Intelligent Devices.
             <br />
-            <span className="text-brand-gradient">Ace your exam with confidence.</span>
+            <span className="text-brand-gradient">Learn with confidence.</span>
           </h1>
           <p className="mt-5 max-w-2xl mx-auto text-lg text-white/80">
-            Every concept that has ever appeared in your exam, rebuilt as flip-cards your brain
-            actually remembers.
-            <strong className="text-white"> First 5 cards of every topic are free.</strong> No card.
-            No setup. No catch.
+            Master the fundamentals of intelligent devices and IoT with interactive flashcards and study materials.
+            <strong className="text-white"> Start learning for free today.</strong> No paywalls.
+            No distractions. Just pure learning.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Button
@@ -150,7 +149,7 @@ export default function Landing() {
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h2 className="text-3xl font-bold mb-4">
-                  Power Electronics concepts tested year after year.
+                  Intelligent Devices concepts tested year after year.
                 </h2>
                 <p className="text-muted-foreground">
                   Thyristors, diodes, and rectifiers. Gate triggering and commutation. DC-DC and
@@ -354,7 +353,7 @@ export default function Landing() {
         </section>
       </main>
       <footer className="border-t border-border/40 mt-6 py-8 text-center text-sm text-white/60">
-        © Power Electronics 1. Master the circuit. Control the power. Ace the exam.
+        © Intelligent Devices. Master the fundamentals. Learn with confidence.
       </footer>
     </div>
   )
