@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
-import { LogOut, Shield, User as UserIcon, LifeBuoy, ArrowLeft, BookOpen } from "lucide-react";
+import { LogOut, Shield, User as UserIcon, LifeBuoy, ArrowLeft, BookOpen, Cpu } from "lucide-react";
 import { useRef } from "react";
 import { InstallAppButton } from "@/components/InstallAppButton";
 
@@ -25,7 +25,7 @@ export function AppHeader({ showBack = false, backTo = "/" }: { showBack?: boole
   };
 
   return (
-    <header className="border-b border-border/50 bg-background/80 backdrop-blur sticky top-0 z-40">
+    <header className="sticky top-0 z-40 border-b border-cyan-400/20 bg-[#061221]/88 backdrop-blur-xl">
       <div className="container mx-auto flex items-center justify-between px-4 py-3 gap-2">
         <div className="flex items-center gap-2">
           {showBack && (
@@ -34,7 +34,10 @@ export function AppHeader({ showBack = false, backTo = "/" }: { showBack?: boole
             </Button>
           )}
           <Link to="/" onClick={onLogo} className="flex items-center gap-3 select-none">
-            <img src={logo} alt="Intelligent Devices" className="h-10 w-auto" draggable={false} />
+            <img src={logo} alt="Intelligent Devices" className="h-10 w-10 rounded-md id-logo-mark" draggable={false} />
+            <span className="hidden sm:inline-flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.18em] text-cyan-100">
+              <Cpu className="h-4 w-4 text-cyan-300" /> Intelligent Devices
+            </span>
           </Link>
         </div>
         <nav className="flex items-center gap-1 flex-wrap justify-end">
