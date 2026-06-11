@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { Shield, Lock } from "lucide-react";
 import logo from "@/assets/logo.png";
 
+const ADMIN_SETUP_PENDING_KEY = "intelligent_devices_admin_setup_pending";
+
 export default function AdminSetup() {
   const nav = useNavigate();
   const [exists, setExists] = useState<boolean | null>(null);
@@ -18,8 +20,9 @@ export default function AdminSetup() {
   const [busy, setBusy] = useState(false);
   const [mode, setMode] = useState<"create" | "signin">(() => {
     if (typeof window === "undefined") return "create";
+    localStorage.removeItem("pe1_admin_setup_pending");
     return window.location.search.includes("finish=1") ||
-      localStorage.getItem("pe1_admin_setup_pending") === "1"
+      localStorage.getItem(ADMIN_SETUP_PENDING_KEY) === "1"
       ? "signin"
       : "create";
   });
@@ -67,7 +70,7 @@ export default function AdminSetup() {
       }
     } else {
       setBusy(false);
-      localStorage.setItem("pe1_admin_setup_pending", "1");
+      localStorage.setItem(ADMIN_SETUP_PENDING_KEY, "1");
       setMode("signin");
       toast.success(
         "Account created. Confirm your email, then sign in here to finish admin setup.",
@@ -85,7 +88,7 @@ export default function AdminSetup() {
     const ok = await claimAfterAuth();
     setBusy(false);
     if (ok) {
-      localStorage.removeItem("pe1_admin_setup_pending");
+      localStorage.removeItem(ADMIN_SETUP_PENDING_KEY);
       toast.success("Welcome, Administrator");
       nav("/admin");
     }
