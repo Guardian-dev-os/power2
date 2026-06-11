@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
-export async function listAccessRequests(filter: "pending" | "all" = "all") {
+export async function listAccessRequests(input: "pending" | "all" | { filter?: "pending" | "all" } = "all") {
+  const filter = typeof input === "string" ? input : input.filter ?? "all";
   let query = (supabase as any)
     .from("access_requests")
     .select("*")
