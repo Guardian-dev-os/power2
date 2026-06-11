@@ -64,9 +64,9 @@ export default function AdminSetup() {
       setBusy(false);
       if (ok) {
         toast.success(
-          exists ? "Admin credentials reset _ you are now the admin" : "Admin account created",
+          exists ? "Admin credentials reset — you are now the admin" : "Admin account created",
         );
-        nav("/admin");
+        window.location.assign("/admin");
       }
     } else {
       setBusy(false);
@@ -90,7 +90,7 @@ export default function AdminSetup() {
     if (ok) {
       localStorage.removeItem(ADMIN_SETUP_PENDING_KEY);
       toast.success("Welcome, Administrator");
-      nav("/admin");
+      window.location.assign("/admin");
     }
   };
 
@@ -98,7 +98,7 @@ export default function AdminSetup() {
     <div className="min-h-screen bg-hero flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-8 bg-card text-card-foreground shadow-card-elev">
         <Link to="/" className="flex justify-center mb-4">
-          <img src={logo} alt="Logo" className="h-14" />
+          <img src={logo} alt="Intelligent Devices" className="h-16 w-16 rounded-xl id-logo-mark" />
         </Link>
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2 text-secondary">
