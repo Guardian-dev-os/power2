@@ -71,25 +71,24 @@ export default function Landing() {
       <main>
         {/* HERO */}
         <section className="container mx-auto px-4 pt-16 pb-12 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1 text-xs text-secondary mb-6">
-            <Zap className="h-3 w-3" /> Built from real National Diploma past papers
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/35 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-200 mb-6">
+            <Zap className="h-3 w-3" /> Intelligent Devices National Diploma revision system
           </div>
           <img
             src={logo}
             alt="Intelligent Devices logo"
             onClick={handleLogoTap}
-            className="mx-auto h-28 w-auto mb-6 drop-shadow-[0_0_60px_rgba(99,102,241,0.55)] cursor-pointer select-none"
+            className="mx-auto h-32 w-32 mb-5 rounded-2xl id-logo-mark cursor-pointer select-none"
           />
-          <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tight leading-tight text-white">
-            Master Intelligent Devices.
+          <h1 className="font-display text-5xl md:text-7xl font-extrabold tracking-tight leading-tight text-white">
+            Intelligent Devices.
             <br />
-            <span className="text-brand-gradient">Ace your exam with confidence.</span>
+            <span className="text-brand-gradient">Study smarter. Pass stronger.</span>
           </h1>
           <p className="mt-5 max-w-2xl mx-auto text-lg text-white/80">
-            Every concept that has ever appeared in your exam, rebuilt as flip-cards your brain
-            actually remembers.
-            <strong className="text-white"> First 5 cards of every topic are free.</strong> No card.
-            No setup. No catch.
+            PLCs, AI, fuzzy logic, robotics, SCADA, LANs, sensors and industrial control content
+            rebuilt into fast notes, flashcards and exam practice.
+            <strong className="text-white"> First 5 cards of every topic are free.</strong>
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Button
@@ -154,8 +153,8 @@ export default function Landing() {
                 </h2>
                 <p className="text-muted-foreground">
                   PLCs and scan cycles. AI and fuzzy logic control. SCADA, HMI and industrial
-                  networks. Robotics, sensors and actuators. Regulated power supplies. The same
-                  exam-tested topics delivered in exam format.
+                  networks. Robotics, sensors and actuators. The same exam-tested topics delivered
+                  in exam format.
                 </p>
                 <p className="mt-4 font-semibold">
                   The students who pass aren't smarter.{" "}
@@ -354,7 +353,7 @@ export default function Landing() {
         </section>
       </main>
       <footer className="border-t border-border/40 mt-6 py-8 text-center text-sm text-white/60">
-        © Intelligent Devices. Master the circuit. Control the power. Ace the exam.
+        © Intelligent Devices. Learn the systems. Understand the logic. Ace the exam.
       </footer>
     </div>
   )
