@@ -71,9 +71,15 @@ export default function Landing() {
       <main>
         {/* HERO */}
         <section className="container mx-auto px-4 pt-16 pb-12 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/35 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-200 mb-6">
+          <div className="inline-flex items-center gap-2 rounded-full border border-sky-300/35 bg-sky-300/10 px-3 py-1 text-xs font-semibold text-sky-200 mb-4">
             <Zap className="h-3 w-3" /> Intelligent Devices National Diploma revision system
           </div>
+          <p className="font-display italic text-sky-200/90 text-lg md:text-xl mb-1">
+            « La dolce revisione — studiare come un'arte. »
+          </p>
+          <p className="text-xs uppercase tracking-[0.25em] text-white/60 mb-5">
+            Un'edizione artigianale · Italian-crafted study experience
+          </p>
           <img
             src={logo}
             alt="Intelligent Devices logo"
