@@ -139,16 +139,6 @@ export default function AdminSetup() {
             <Button onClick={signIn} disabled={busy} className="w-full bg-brand-gradient">
               Sign in
             </Button>
-            {exists === false && (
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setMode("create")}
-                className="w-full"
-              >
-                Create a different admin account
-              </Button>
-            )}
           </div>
         ) : (
           <div className="space-y-3 mt-4">
