@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, BookOpen, Zap, Volume2, Eye, EyeOff, Flag, CheckCircle2, RotateCcw } from "lucide-react";
+import { RichContent } from "@/components/RichContent";
 import { useBookmarks, useMastery } from "@/hooks/use-study-state";
 
 interface ExamCard {
