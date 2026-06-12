@@ -341,6 +341,13 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ESPRESSO DIVIDER */}
+        <section className="container mx-auto px-4 py-6 text-center">
+          <p className="font-display italic text-sky-200/70 text-sm tracking-wide">
+            ☕ prenditi un caffè, poi rivedi
+          </p>
+        </section>
+
         {/* FINAL CTA */}
         <section className="container mx-auto px-4 py-16 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white">
@@ -356,10 +363,13 @@ export default function Landing() {
           >
             <Link to="/request-access">Request Access</Link>
           </Button>
+          <p className="mt-8 font-display italic text-sky-200/70 text-sm">
+            « Il sapere è il pane dell'anima. » — proverbio italiano
+          </p>
         </section>
       </main>
       <footer className="border-t border-border/40 mt-6 py-8 text-center text-sm text-white/60">
-        © Intelligent Devices. Learn the systems. Understand the logic. Ace the exam.
+        © Intelligent Devices · Un'edizione artigianale. Learn the systems. Understand the logic. Ace the exam.
       </footer>
     </div>
   )
