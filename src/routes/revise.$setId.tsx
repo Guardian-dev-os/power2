@@ -18,6 +18,7 @@ export default function ReviseSet() {
   const { hidden } = useScreenshotProtection();
   const [set, setSet] = useState<any>(null);
   const [cards, setCards] = useState<any[]>([]);
+  const [allSets, setAllSets] = useState<any[]>([]);
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const { mastery, setLevel } = useMastery();
@@ -28,21 +29,16 @@ export default function ReviseSet() {
   useEffect(() => {
     (async () => {
       try {
-        const [setResult, cardsResult] = await Promise.all([
-          supabase
-            .from("topic_sets")
-            .select("*")
-            .eq("id", setId!)
-            .maybeSingle(),
-          supabase
-            .from("cards")
-            .select("*")
-            .eq("topic_set_id", setId!)
-            .order("order_index")
-            .limit(1000) // Prevent loading excessive cards
+        const [setResult, cardsResult, setsResult] = await Promise.all([
+          supabase.from("topic_sets").select("*").eq("id", setId!).maybeSingle(),
+          supabase.from("cards").select("*").eq("topic_set_id", setId!).order("order_index").limit(1000),
+          supabase.from("topic_sets").select("id, title, order_index").order("order_index"),
         ]);
         setSet(setResult.data);
         setCards(cardsResult.data || []);
+        setAllSets(setsResult.data || []);
+        setIdx(0);
+        setFlipped(false);
       } catch (error) {
         console.error("[v0] Error loading topic data:", error);
       }
