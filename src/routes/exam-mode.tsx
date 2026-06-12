@@ -253,7 +253,7 @@ export default function ExamMode() {
                     {isFlipped ? "ANSWER" : "QUESTION"}
                   </p>
                   <div className="text-white text-lg md:text-xl leading-relaxed font-medium min-h-24">
-                    {isFlipped ? currentCard.answer : currentCard.question}
+                    <RichContent text={isFlipped ? currentCard.answer : currentCard.question} />
                   </div>
                 </div>
                 <div className="text-center text-white/50 text-sm mt-6">
