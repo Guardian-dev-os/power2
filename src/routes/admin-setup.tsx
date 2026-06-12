@@ -80,18 +80,33 @@ export default function AdminSetup() {
 
   const signIn = async () => {
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error, data } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setBusy(false);
       return toast.error(error.message);
     }
-    const ok = await claimAfterAuth();
-    setBusy(false);
-    if (ok) {
-      localStorage.removeItem(ADMIN_SETUP_PENDING_KEY);
-      toast.success("Welcome, Administrator");
-      window.location.assign("/admin");
+    // Check if signed-in user is already admin
+    const uid = data.user?.id;
+    let isAlreadyAdmin = false;
+    if (uid) {
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", uid)
+        .eq("role", "admin");
+      isAlreadyAdmin = !!(roles && roles.length > 0);
     }
+    if (!isAlreadyAdmin) {
+      const ok = await claimAfterAuth();
+      if (!ok) {
+        setBusy(false);
+        return;
+      }
+    }
+    setBusy(false);
+    localStorage.removeItem(ADMIN_SETUP_PENDING_KEY);
+    toast.success("Welcome, Administrator");
+    window.location.assign("/admin");
   };
 
   return (

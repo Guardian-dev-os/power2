@@ -116,6 +116,8 @@ export default function AdminDashboard() {
 function RequestsPanel() {
   const [rows, setRows] = useState<any[]>([]);
   const [filter, setFilter] = useState<"pending" | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [search, setSearch] = useState("");
   const [loadingRows, setLoadingRows] = useState(false);
 
   const load = async () => {
@@ -140,9 +142,7 @@ function RequestsPanel() {
       toast.success(
         `Approved. Code ${res.code} — copied. Send it via Gmail/WhatsApp from this row.`,
       );
-      try {
-        await navigator.clipboard?.writeText(res.code);
-      } catch {}
+      try { await navigator.clipboard?.writeText(res.code); } catch {}
       load();
     } catch (e: any) {
       toast.error(e?.message || "Approval failed");
@@ -154,9 +154,7 @@ function RequestsPanel() {
       await accessApi.reject({ request_id: id });
       toast.success("Rejected");
       load();
-    } catch (e: any) {
-      toast.error(e?.message || "Failed");
-    }
+    } catch (e: any) { toast.error(e?.message || "Failed"); }
   };
   const del = async (id: string) => {
     if (!confirm("Delete this request?")) return;
@@ -164,14 +162,33 @@ function RequestsPanel() {
       await deleteAccessRequest(id);
       toast.success("Request deleted");
       load();
-    } catch (e: any) {
-      toast.error(e?.message || "Delete failed");
-    }
+    } catch (e: any) { toast.error(e?.message || "Delete failed"); }
   };
   const copy = (code: string) => {
     navigator.clipboard?.writeText(code);
     toast.success(`Copied ${code}`);
   };
+
+  // Smart classification: derive a tag from the request content
+  const classify = (r: any): { label: string; cls: string } => {
+    const txt = `${r.full_name} ${r.email || ""} ${r.note || ""} ${r.whatsapp || ""}`.toLowerCase();
+    if (r.status === "approved") return { label: "✅ Verified", cls: "bg-emerald-600/30 border-emerald-500/40 text-emerald-200" };
+    if (r.status === "rejected") return { label: "❌ Rejected", cls: "bg-red-600/30 border-red-500/40 text-red-200" };
+    if (/(urgent|asap|today|now|please)/.test(txt)) return { label: "🔥 Priority", cls: "bg-amber-600/30 border-amber-500/40 text-amber-200" };
+    if (/(student|university|college)/.test(txt)) return { label: "🎓 Student", cls: "bg-sky-600/30 border-sky-500/40 text-sky-200" };
+    if (/\+?263/.test(txt)) return { label: "🇿🇼 Zim", cls: "bg-indigo-600/30 border-indigo-500/40 text-indigo-200" };
+    return { label: "🆕 New", cls: "bg-slate-600/30 border-slate-500/40 text-slate-200" };
+  };
+
+  const visibleRows = rows.filter((r) => {
+    if (statusFilter !== "all" && r.status !== statusFilter) return false;
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return [r.full_name, r.email, r.whatsapp, r.generated_code, r.note]
+      .some((v) => String(v ?? "").toLowerCase().includes(q));
+  });
+
+  const fmt = (d?: string) => (d ? new Date(d).toLocaleString() : "—");
 
   return (
     <div className="space-y-4 mt-4">
@@ -182,144 +199,99 @@ function RequestsPanel() {
             <strong>Approval flow:</strong> Agent calls you with the name of the person who paid.
             Find their pending request below and click <strong>Approve</strong> — a unique access
             code is generated and shown on the row. Then send it manually using{" "}
-            <strong>Open Gmail</strong> or <strong>Send via WhatsApp</strong> (both pre-fill the
-            code).
+            <strong>Open Gmail</strong> or <strong>Send via WhatsApp</strong>.
           </span>
         </p>
       </Card>
-      <div className="flex gap-2">
-        <Button
-          size="sm"
-          variant={filter === "pending" ? "default" : "outline"}
-          onClick={() => setFilter("pending")}
-        >
-          Pending
-        </Button>
-        <Button
-          size="sm"
-          variant={filter === "all" ? "default" : "outline"}
-          onClick={() => setFilter("all")}
-        >
-          All
-        </Button>
-        <Button size="sm" variant="ghost" onClick={load} disabled={loadingRows}>
-          Refresh
-        </Button>
-        <div className="ml-auto text-sm text-muted-foreground self-center">
-          {loadingRows ? "Loading…" : `${rows.length} request(s)`}
+      <div className="flex flex-wrap gap-2 items-center">
+        <Button size="sm" variant={filter === "pending" ? "default" : "outline"} onClick={() => setFilter("pending")}>Pending</Button>
+        <Button size="sm" variant={filter === "all" ? "default" : "outline"} onClick={() => setFilter("all")}>All</Button>
+        <div className="flex gap-1 ml-2">
+          {["all", "pending", "approved", "rejected"].map((s) => (
+            <Button key={s} size="sm" variant={statusFilter === s ? "secondary" : "ghost"} onClick={() => setStatusFilter(s)}>
+              {s.charAt(0).toUpperCase() + s.slice(1)}
+            </Button>
+          ))}
+        </div>
+        <div className="relative flex-1 min-w-[200px] max-w-md">
+          <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search name, email, phone, code, note…"
+            className="pl-9"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <Button size="sm" variant="ghost" onClick={load} disabled={loadingRows}>Refresh</Button>
+        <div className="ml-auto text-sm text-muted-foreground">
+          {loadingRows ? "Loading…" : `${visibleRows.length} of ${rows.length}`}
         </div>
       </div>
-      {!loadingRows && rows.length === 0 && (
-        <Card className="p-6 bg-card text-card-foreground text-sm text-muted-foreground">
-          No requests.
-        </Card>
+      {!loadingRows && visibleRows.length === 0 && (
+        <Card className="p-6 bg-card text-card-foreground text-sm text-muted-foreground">No requests match.</Card>
       )}
-      {rows.map((r) => (
-        <Card key={r.id} className="p-5 bg-card text-card-foreground">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h4 className="font-semibold">{r.full_name}</h4>
-                <Badge
-                  variant={
-                    r.status === "approved"
-                      ? "default"
-                      : r.status === "rejected"
-                        ? "destructive"
-                        : "outline"
-                  }
-                >
-                  {r.status}
-                </Badge>
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                📱{" "}
-                <a
-                  className="underline"
-                  href={`https://wa.me/${r.whatsapp.replace(/[^0-9]/g, "")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {r.whatsapp}
-                </a>
-              </p>
-              {r.email && (
-                <p className="text-sm text-muted-foreground">
-                  ✉️{" "}
-                  <a href={`mailto:${r.email}`} className="underline">
-                    {r.email}
-                  </a>
-                </p>
-              )}
-              {r.generated_code && (
-                <div className="mt-3 p-3 rounded bg-secondary/10 border border-secondary/40">
-                  <p className="text-xs text-secondary uppercase tracking-wider font-semibold mb-1">
-                    Access code
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <code className="text-lg font-mono font-bold">{r.generated_code}</code>
-                    <Button size="sm" variant="ghost" onClick={() => copy(r.generated_code)}>
-                      <Copy className="h-3 w-3" />
-                    </Button>
-                  </div>
+      {visibleRows.map((r) => {
+        const tag = classify(r);
+        return (
+          <Card key={r.id} className="p-5 bg-card text-card-foreground">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="font-semibold">{r.full_name}</h4>
+                  <Badge variant={r.status === "approved" ? "default" : r.status === "rejected" ? "destructive" : "outline"}>{r.status}</Badge>
+                  <span className={`text-xs px-2 py-0.5 rounded-full border ${tag.cls}`}>{tag.label}</span>
                 </div>
-              )}
-              <p className="text-xs text-muted-foreground mt-2">
-                Submitted {new Date(r.created_at).toLocaleString()}
-              </p>
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              {r.status === "pending" && (
-                <>
-                  <Button size="sm" onClick={() => approve(r.id)} className="bg-brand-gradient">
-                    <Check className="h-4 w-4 mr-1" /> Approve & generate code
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => reject(r.id)}>
-                    <X className="h-4 w-4 mr-1" /> Reject
-                  </Button>
-                </>
-              )}
-              {r.status === "approved" && r.generated_code && (
-                <>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
+                <p className="text-sm text-muted-foreground mt-1">
+                  📱 <a className="underline" href={`https://wa.me/${(r.whatsapp || "").replace(/[^0-9]/g, "")}`} target="_blank" rel="noreferrer">{r.whatsapp}</a>
+                </p>
+                {r.email && (
+                  <p className="text-sm text-muted-foreground">✉️ <a href={`mailto:${r.email}`} className="underline">{r.email}</a></p>
+                )}
+                {r.note && <p className="text-sm text-muted-foreground mt-1 italic">“{r.note}”</p>}
+                {r.generated_code && (
+                  <div className="mt-3 p-3 rounded bg-secondary/10 border border-secondary/40">
+                    <p className="text-xs text-secondary uppercase tracking-wider font-semibold mb-1">Access code</p>
+                    <div className="flex items-center gap-2">
+                      <code className="text-lg font-mono font-bold">{r.generated_code}</code>
+                      <Button size="sm" variant="ghost" onClick={() => copy(r.generated_code)}><Copy className="h-3 w-3" /></Button>
+                    </div>
+                  </div>
+                )}
+                <div className="text-xs text-muted-foreground mt-3 grid sm:grid-cols-2 gap-x-4 gap-y-1">
+                  <span>🕒 <strong>Submitted:</strong> {fmt(r.created_at)}</span>
+                  {r.approved_at && <span>✅ <strong>Approved:</strong> {fmt(r.approved_at)}</span>}
+                  {r.rejected_at && <span>⛔ <strong>Rejected:</strong> {fmt(r.rejected_at)}</span>}
+                  {r.updated_at && <span>🔄 <strong>Updated:</strong> {fmt(r.updated_at)}</span>}
+                </div>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {r.status === "pending" && (
+                  <>
+                    <Button size="sm" onClick={() => approve(r.id)} className="bg-brand-gradient"><Check className="h-4 w-4 mr-1" /> Approve & generate code</Button>
+                    <Button size="sm" variant="outline" onClick={() => reject(r.id)}><X className="h-4 w-4 mr-1" /> Reject</Button>
+                  </>
+                )}
+                {r.status === "approved" && r.generated_code && (
+                  <>
+                    <Button size="sm" variant="outline" onClick={() => {
                       const subject = encodeURIComponent("Your Access Code");
-                      const body = encodeURIComponent(
-                        `Hi ${r.full_name},\n\nYour access code: ${r.generated_code}\n\nSign in with your full name and this code.\n\nThanks.`,
-                      );
+                      const body = encodeURIComponent(`Hi ${r.full_name},\n\nYour access code: ${r.generated_code}\n\nSign in with your full name and this code.\n\nThanks.`);
                       const to = r.email ? encodeURIComponent(r.email) : "";
-                      window.open(
-                        `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`,
-                        "_blank",
-                      );
-                    }}
-                  >
-                    <Mail className="h-4 w-4 mr-1" /> Open Gmail
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
+                      window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`, "_blank");
+                    }}><Mail className="h-4 w-4 mr-1" /> Open Gmail</Button>
+                    <Button size="sm" variant="outline" onClick={() => {
                       const phone = (r.whatsapp || "").replace(/[^0-9]/g, "");
-                      const text = encodeURIComponent(
-                        `Hi ${r.full_name}, your access code is: ${r.generated_code}\n\nSign in with your full name and this code.`,
-                      );
+                      const text = encodeURIComponent(`Hi ${r.full_name}, your access code is: ${r.generated_code}\n\nSign in with your full name and this code.`);
                       window.open(`https://wa.me/${phone}?text=${text}`, "_blank");
-                    }}
-                  >
-                    <Send className="h-4 w-4 mr-1" /> Send via WhatsApp
-                  </Button>
-                </>
-              )}
-              <Button size="sm" variant="ghost" onClick={() => del(r.id)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
+                    }}><Send className="h-4 w-4 mr-1" /> Send via WhatsApp</Button>
+                  </>
+                )}
+                <Button size="sm" variant="ghost" onClick={() => del(r.id)}><Trash2 className="h-4 w-4" /></Button>
+              </div>
             </div>
-          </div>
-        </Card>
-      ))}
+          </Card>
+        );
+      })}
     </div>
   );
 }

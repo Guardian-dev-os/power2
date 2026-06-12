@@ -18,6 +18,7 @@ export default function ReviseSet() {
   const { hidden } = useScreenshotProtection();
   const [set, setSet] = useState<any>(null);
   const [cards, setCards] = useState<any[]>([]);
+  const [allSets, setAllSets] = useState<any[]>([]);
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const { mastery, setLevel } = useMastery();
@@ -28,21 +29,16 @@ export default function ReviseSet() {
   useEffect(() => {
     (async () => {
       try {
-        const [setResult, cardsResult] = await Promise.all([
-          supabase
-            .from("topic_sets")
-            .select("*")
-            .eq("id", setId!)
-            .maybeSingle(),
-          supabase
-            .from("cards")
-            .select("*")
-            .eq("topic_set_id", setId!)
-            .order("order_index")
-            .limit(1000) // Prevent loading excessive cards
+        const [setResult, cardsResult, setsResult] = await Promise.all([
+          supabase.from("topic_sets").select("*").eq("id", setId!).maybeSingle(),
+          supabase.from("cards").select("*").eq("topic_set_id", setId!).order("order_index").limit(1000),
+          supabase.from("topic_sets").select("id, title, order_index").order("order_index"),
         ]);
         setSet(setResult.data);
         setCards(cardsResult.data || []);
+        setAllSets(setsResult.data || []);
+        setIdx(0);
+        setFlipped(false);
       } catch (error) {
         console.error("[v0] Error loading topic data:", error);
       }
@@ -71,8 +67,20 @@ export default function ReviseSet() {
     <div className="min-h-screen bg-hero no-select">
       <AppHeader />
       <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <Button asChild className="mb-6 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 font-semibold hover:text-white"><Link to="/dashboard" className="text-white"><ArrowLeft className="h-4 w-4 mr-1" /> Back to All Topics</Link></Button>
-        
+        <div className="flex flex-wrap gap-3 items-center mb-6">
+          <Button asChild className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 font-semibold hover:text-white"><Link to="/dashboard" className="text-white"><ArrowLeft className="h-4 w-4 mr-1" /> Back to All Topics</Link></Button>
+          <label className="text-sm text-foreground/80 font-semibold ml-2">Jump to topic:</label>
+          <select
+            value={setId}
+            onChange={(e) => nav(`/revise/${e.target.value}`)}
+            className="rounded-md border border-purple-500/40 bg-card text-card-foreground px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            {allSets.map((s) => (
+              <option key={s.id} value={s.id}>{s.title}</option>
+            ))}
+          </select>
+        </div>
+
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 text-foreground">{set.title}</h1>
           <p className="text-foreground/75 text-sm md:text-base leading-relaxed max-w-2xl">{set.description}</p>

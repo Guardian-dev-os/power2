@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, BookOpen, Zap, Volume2, Eye, EyeOff, Flag, CheckCircle2, RotateCcw } from "lucide-react";
+import { RichContent } from "@/components/RichContent";
 import { useBookmarks, useMastery } from "@/hooks/use-study-state";
 
 interface ExamCard {
@@ -36,40 +37,39 @@ export default function ExamMode() {
   useEffect(() => {
     if (!user) return;
     setFetching(true);
-    
-    // Load cards with optimized performance
     const loadCards = async () => {
       try {
-        // First try to load from Supabase
-        const { data: examCards } = await supabase
-          .from("cards")
-          .select("id, question, answer, difficulty, topic_set_id")
-          .eq("topic_set_id", "f0000010-0000-0000-0000-000000000000")
-          .order("order_index")
-          .limit(500);
-        
-        // If found in database, use those cards
+        // Load ALL cards across ALL topics, plus topic titles for labeling
+        const [{ data: examCards }, { data: sets }] = await Promise.all([
+          supabase
+            .from("cards")
+            .select("id, question, answer, difficulty, topic_set_id, order_index")
+            .order("topic_set_id")
+            .order("order_index")
+            .limit(5000),
+          supabase.from("topic_sets").select("id, title"),
+        ]);
+        const titleMap = new Map<string, string>((sets ?? []).map((s: any) => [s.id, s.title]));
         if (examCards && examCards.length > 0) {
-          setCards(examCards.map((card: any) => ({
-            id: card.id,
-            question: card.question,
-            answer: card.answer,
-            difficulty: card.difficulty || 'medium',
-            topic: 'EXAM Mode'
-          })));
+          setCards(
+            examCards.map((c: any) => ({
+              id: c.id,
+              question: c.question,
+              answer: c.answer,
+              difficulty: c.difficulty || "medium",
+              topic: titleMap.get(c.topic_set_id) || "Exam",
+            })),
+          );
         } else {
-          // Use comprehensive local exam cards
           setCards(ALL_EXAM_CARDS);
         }
       } catch (error) {
-        // Fallback to local cards if database fails
-        console.error("[v0] Error loading from database, using local cards:", error);
+        console.error("[v0] Error loading exam cards:", error);
         setCards(ALL_EXAM_CARDS);
       } finally {
         setFetching(false);
       }
     };
-    
     loadCards();
   }, [user]);
 
@@ -233,6 +233,9 @@ export default function ExamMode() {
                   {currentCard.difficulty.charAt(0).toUpperCase() + currentCard.difficulty.slice(1)} Level
                 </Badge>
               )}
+              {currentCard.topic && (
+                <Badge className="bg-sky-600/70 border-sky-500/50 text-white border">{currentCard.topic}</Badge>
+              )}
               <span className="text-xs text-white/60">Question {progress.current}</span>
             </div>
 
@@ -250,7 +253,7 @@ export default function ExamMode() {
                     {isFlipped ? "ANSWER" : "QUESTION"}
                   </p>
                   <div className="text-white text-lg md:text-xl leading-relaxed font-medium min-h-24">
-                    {isFlipped ? currentCard.answer : currentCard.question}
+                    <RichContent text={isFlipped ? currentCard.answer : currentCard.question} />
                   </div>
                 </div>
                 <div className="text-center text-white/50 text-sm mt-6">
