@@ -1,0 +1,1 @@
+ALTER TABLE public.access_codes ADD COLUMN IF NOT EXISTS bound_user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL;

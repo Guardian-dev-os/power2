@@ -51,6 +51,7 @@ export type Database = {
           agent_name: string | null
           amount: number
           assigned_emails: string[] | null
+          bound_user_id: string | null
           code: string
           created_at: string
           expires_at: string | null
@@ -63,6 +64,7 @@ export type Database = {
           agent_name?: string | null
           amount?: number
           assigned_emails?: string[] | null
+          bound_user_id?: string | null
           code: string
           created_at?: string
           expires_at?: string | null
@@ -75,6 +77,7 @@ export type Database = {
           agent_name?: string | null
           amount?: number
           assigned_emails?: string[] | null
+          bound_user_id?: string | null
           code?: string
           created_at?: string
           expires_at?: string | null

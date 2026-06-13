@@ -208,7 +208,7 @@ export default function Landing() {
               {
                 i: KeyRound,
                 t: "2. Pay an agent",
-                d: `Hand over $${solo} (solo) or $${pair} (two of you together) to an authorised agent. Agent notifies admin after payment.`,
+                d: `Hand over $${solo}/month (solo) or $${pair}/month (two of you together) to an authorised agent. Agent notifies admin after payment.`,
               },
               {
                 i: Cpu,
@@ -233,14 +233,17 @@ export default function Landing() {
         {/* PRICE */}
         <section className="container mx-auto px-4 py-12">
           <Card className="p-10 bg-card text-card-foreground shadow-card-elev">
-            <h2 className="text-3xl font-bold text-center">Cheaper than a rewrite.</h2>
+            <h2 className="text-3xl font-bold text-center">Simple monthly pricing.</h2>
             <p className="text-center text-muted-foreground mt-2">
-              Pay once. Keep access till end of exam. No monthly anything.
+              Pay per month. Cancel anytime. Keep revising as long as you need.
             </p>
             <div className="grid md:grid-cols-2 gap-6 mt-8">
               <div className="rounded-xl border-2 border-border p-6 text-center">
                 <p className="text-sm uppercase tracking-wider text-muted-foreground">Solo</p>
-                <p className="text-5xl font-bold mt-2">${solo}</p>
+                <p className="text-5xl font-bold mt-2">
+                  ${solo}
+                  <span className="text-base font-medium text-muted-foreground">/month</span>
+                </p>
                 <p className="text-sm text-muted-foreground mt-2">One individual, full access</p>
               </div>
               <div className="rounded-xl border-2 border-secondary p-6 text-center bg-secondary/5 relative">
@@ -250,9 +253,12 @@ export default function Landing() {
                 <p className="text-sm uppercase tracking-wider text-secondary">
                   Pair (sign up together)
                 </p>
-                <p className="text-5xl font-bold mt-2">${pair}</p>
+                <p className="text-5xl font-bold mt-2">
+                  ${pair}
+                  <span className="text-base font-medium text-muted-foreground">/month</span>
+                </p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Two new users, registered together. Save together when you sign up as a pair.
+                  Two users registered together. Pay less per person, every month.
                 </p>
               </div>
             </div>
@@ -281,7 +287,7 @@ export default function Landing() {
                 d: "Five full past paper sets, model answers verified.",
               },
               { i: Download, t: "Install on phone", d: "Add to home screen, revise even offline." },
-              { i: Mail, t: "Real human support", d: "intelligentdevices@gmail.com" },
+              { i: Mail, t: "Real human support", d: "examgeniuspro@gmail.com" },
             ].map(({ i: Icon, t, d }) => (
               <Card key={t} className="p-4 bg-card text-card-foreground">
                 <Icon className="h-5 w-5 text-secondary mb-2" />
