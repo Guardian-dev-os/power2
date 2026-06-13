@@ -208,7 +208,7 @@ export default function Landing() {
               {
                 i: KeyRound,
                 t: "2. Pay an agent",
-                d: `Hand over $${solo} (solo) or $${pair} (two of you together) to an authorised agent. Agent notifies admin after payment.`,
+                d: `Hand over $${solo}/month (solo) or $${pair}/month (two of you together) to an authorised agent. Agent notifies admin after payment.`,
               },
               {
                 i: Cpu,
@@ -287,7 +287,7 @@ export default function Landing() {
                 d: "Five full past paper sets, model answers verified.",
               },
               { i: Download, t: "Install on phone", d: "Add to home screen, revise even offline." },
-              { i: Mail, t: "Real human support", d: "intelligentdevices@gmail.com" },
+              { i: Mail, t: "Real human support", d: "examgeniuspro@gmail.com" },
             ].map(({ i: Icon, t, d }) => (
               <Card key={t} className="p-4 bg-card text-card-foreground">
                 <Icon className="h-5 w-5 text-secondary mb-2" />
